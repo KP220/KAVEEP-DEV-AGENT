@@ -33,23 +33,34 @@ This repository establishes that process.
 # Position Inside the Ecosystem
 
 ``` text
+KAVEEP Constitution
+        │
+        ▼
+KAVEEP Roadmap
+        │
+        ▼
 KAVEEP-POLICY
-↓
+        │
+        ▼
 ENGINEERING-CHARTER.md
-↓
+        │
+        ▼
 ENGINEERING-PHILOSOPHY.md
-↓
+        │
+        ▼
 ENGINEERING-CONSTITUTION.md
-↓
+        │
+        ▼
 Architecture
         │
-        ├──────────────┐
-        ▼              ▼
-Platforms        AI Agents
-        │              │
-        └──────────────┘
-               ▼
-      KAVEEP Ecosystem
+        ▼
+Engineering Specifications
+        │
+        ▼
+Engineering Schemas
+        │
+        ▼
+Engineering Implementation
 ```
 
 ------------------------------------------------------------------------
