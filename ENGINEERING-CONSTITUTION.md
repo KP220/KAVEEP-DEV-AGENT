@@ -972,14 +972,29 @@ Every engineering capability operates within constitutional authority.
 # Constitutional References
 
 This Engineering Constitution derives its authority from:
+
 - KAVEEP Constitution
 - KAVEEP Roadmap
 - KAVEEP-POLICY
 
-The following documents elaborate constitutional engineering behavior:
+The following engineering foundation documents elaborate constitutional engineering behavior:
+
 - ENGINEERING-CHARTER.md
 - ENGINEERING-PHILOSOPHY.md
 - ARCHITECTURE.md
+- ENGINEERING-ORGANIZATION.md
+- ENGINEERING-RESPONSIBILITY-MODEL.md
+- ENGINEERING-LIFECYCLE.md
+- ENGINEERING-WORKFLOW.md
+- ENGINEERING-DECISION-FRAMEWORK.md
+- ENGINEERING-CAPABILITY-MODEL.md
+- ENGINEERING-CONTRACT.md
+- REPOSITORY-STANDARD.md
+- ENGINEERING-GLOSSARY.md
+
+These documents elaborate engineering practice.
+
+They shall never redefine constitutional engineering authority.
 ...
 
 The following engineering foundation documents elaborate constitutional engineering behavior.
