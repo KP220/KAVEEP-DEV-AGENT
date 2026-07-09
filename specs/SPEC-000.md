@@ -66,13 +66,34 @@ KAVEEP Constitution
 KAVEEP Roadmap
         │
         ▼
-KAVEEP Constitution
-        │
-        ▼
-KAVEEP Roadmap
-        │
-        ▼
 KAVEEP-POLICY
+        │
+        ▼
+ENGINEERING-CONSTITUTION.md
+        │
+        ▼
+ENGINEERING-CHARTER.md
+        │
+        ▼
+ENGINEERING-PHILOSOPHY.md
+        │
+        ▼
+ARCHITECTURE.md
+        │
+        ▼
+ENGINEERING-LIFECYCLE.md
+        │
+        ▼
+ENGINEERING-WORKFLOW.md
+        │
+        ▼
+Engineering Specifications
+        │
+        ▼
+Engineering Schemas
+        │
+        ▼
+Engineering Implementation
         │
         ▼
 ENGINEERING-CONSTITUTION.md
