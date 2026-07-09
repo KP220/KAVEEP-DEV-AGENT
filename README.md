@@ -33,19 +33,15 @@ This repository establishes that process.
 # Position Inside the Ecosystem
 
 ``` text
-KAVEEP Constitution
-        │
-        ▼
-KAVEEP Roadmap
-        │
-        ▼
 KAVEEP-POLICY
-        │
-        ▼
+↓
+ENGINEERING-CHARTER.md
+↓
+ENGINEERING-PHILOSOPHY.md
+↓
 ENGINEERING-CONSTITUTION.md
-        │
-        ▼
-KAVEEP-DEV-AGENT
+↓
+Architecture
         │
         ├──────────────┐
         ▼              ▼
