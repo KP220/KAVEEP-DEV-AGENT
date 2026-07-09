@@ -69,25 +69,25 @@ KAVEEP Roadmap
 KAVEEP-POLICY
         │
         ▼
-ENGINEERING-CONSTITUTION.md
-        │
-        ▼
 ENGINEERING-CHARTER.md
         │
         ▼
 ENGINEERING-PHILOSOPHY.md
         │
         ▼
+ENGINEERING-CONSTITUTION.md
+        │
+        ▼
 Architecture
         │
         ▼
-Specifications
+Engineering Specifications
         │
         ▼
-Schemas
+Engineering Schemas
         │
         ▼
-Implementation
+Engineering Implementation
 ```
 
 Every engineering specification derives its authority from the Engineering Constitution.
