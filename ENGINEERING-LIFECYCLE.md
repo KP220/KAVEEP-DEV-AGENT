@@ -408,22 +408,31 @@ KAVEEP Roadmap
 KAVEEP-POLICY
         │
         ▼
-ENGINEERING-CHARTER
+ENGINEERING-CONSTITUTION.md
         │
         ▼
-ENGINEERING-PHILOSOPHY
+ENGINEERING-CHARTER.md
         │
         ▼
-Architecture
+ENGINEERING-PHILOSOPHY.md
         │
         ▼
-Engineering Lifecycle
+ARCHITECTURE.md
         │
         ▼
-Specifications
+ENGINEERING-LIFECYCLE.md
         │
         ▼
-Implementation
+ENGINEERING-WORKFLOW.md
+        │
+        ▼
+Engineering Specifications
+        │
+        ▼
+Engineering Schemas
+        │
+        ▼
+Engineering Implementation
 ```
 
 Engineering Lifecycle operationalizes engineering philosophy into repeatable engineering practice.
