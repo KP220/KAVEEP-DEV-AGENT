@@ -222,6 +222,13 @@ Before performing any engineering activity:
 
 ------------------------------------------------------------------------
 
+# Scope
+Defines and governs engineering standards
+for every official KAVEEP repository,
+platform, service, application, and AI agent.
+
+------------------------------------------------------------------------
+
 # Related Repositories
 
 -   KAVEEP-CORE
