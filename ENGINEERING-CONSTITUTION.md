@@ -276,16 +276,22 @@ Engineering Schema
 Engineering Specification
         │
         ▼
-Architecture
+ENGINEERING-WORKFLOW.md
         │
         ▼
-Engineering Constitution
+ENGINEERING-LIFECYCLE.md
         │
         ▼
-Engineering Philosophy
+ARCHITECTURE.md
         │
         ▼
-Engineering Charter
+ENGINEERING-PHILOSOPHY.md
+        │
+        ▼
+ENGINEERING-CHARTER.md
+        │
+        ▼
+ENGINEERING-CONSTITUTION.md
         │
         ▼
 KAVEEP-POLICY
