@@ -1,0 +1,161 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kaveep.dev/schemas/engineering-task.schema.json",
+  "title": "KAVEEP Engineering Task",
+  "description": "Defines a single engineering task executed under KAVEEP-DEV-AGENT governance.",
+  "type": "object",
+  "required": [
+    "task_id",
+    "title",
+    "status",
+    "risk_level",
+    "authority_trace",
+    "scope",
+    "inputs",
+    "expected_outputs",
+    "approval_required"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "task_id": {
+      "type": "string",
+      "description": "Unique task identifier.",
+      "pattern": "^TASK-[0-9]{3,}$"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 3
+    },
+    "description": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "PROPOSED",
+        "PLANNED",
+        "IN_PROGRESS",
+        "BLOCKED",
+        "VALIDATING",
+        "WAITING_APPROVAL",
+        "APPROVED",
+        "REJECTED",
+        "COMPLETED"
+      ]
+    },
+    "risk_level": {
+      "type": "string",
+      "enum": [
+        "R0_READ_ONLY",
+        "R1_LOW",
+        "R2_SIMULATION",
+        "R3_REVERSIBLE",
+        "R4_HIGH",
+        "R5_CRITICAL"
+      ]
+    },
+    "authority_trace": {
+      "type": "object",
+      "required": [
+        "constitution",
+        "roadmap",
+        "policy",
+        "engineering_charter",
+        "engineering_philosophy",
+        "architecture",
+        "specification"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "constitution": { "type": "string" },
+        "roadmap": { "type": "string" },
+        "policy": { "type": "string" },
+        "engineering_charter": { "type": "string" },
+        "engineering_philosophy": { "type": "string" },
+        "architecture": { "type": "string" },
+        "specification": { "type": "string" }
+      }
+    },
+    "scope": {
+      "type": "object",
+      "required": [
+        "repository",
+        "allowed_paths",
+        "forbidden_paths"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "repository": {
+          "type": "string"
+        },
+        "allowed_paths": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "forbidden_paths": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "inputs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "type"],
+        "additionalProperties": false,
+        "properties": {
+          "name": { "type": "string" },
+          "type": {
+            "type": "string",
+            "enum": [
+              "SPECIFICATION",
+              "ARCHITECTURE",
+              "POLICY",
+              "SCHEMA",
+              "EXAMPLE",
+              "SOURCE_CODE",
+              "ISSUE",
+              "REPORT",
+              "USER_REQUEST"
+            ]
+          },
+          "reference": { "type": "string" }
+        }
+      }
+    },
+    "expected_outputs": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "PLAN",
+          "CODE_CHANGE",
+          "DOCUMENTATION",
+          "SCHEMA",
+          "EXAMPLE",
+          "TEST",
+          "VALIDATION_REPORT",
+          "ENGINEERING_REPORT",
+          "PULL_REQUEST"
+        ]
+      }
+    },
+    "approval_required": {
+      "type": "boolean"
+    },
+    "approval_level": {
+      "type": "string",
+      "enum": [
+        "A0_NONE",
+        "A1_NOTIFY",
+        "A2_CONFIRM",
+        "A3_EXPLICIT",
+        "A4_CRITICAL"
+      ]
+    },
+    "notes": {
+      "type": "string"
+    }
+  }
+}
