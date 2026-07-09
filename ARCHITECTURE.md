@@ -261,19 +261,31 @@ KAVEEP Roadmap
 KAVEEP-POLICY
         │
         ▼
-ENGINEERING-CHARTER
+ENGINEERING-CONSTITUTION.md
         │
         ▼
-ENGINEERING-PHILOSOPHY
+ENGINEERING-CHARTER.md
         │
         ▼
-Architecture
+ENGINEERING-PHILOSOPHY.md
         │
         ▼
-Specifications
+ARCHITECTURE.md
         │
         ▼
-Implementation
+ENGINEERING-LIFECYCLE.md
+        │
+        ▼
+ENGINEERING-WORKFLOW.md
+        │
+        ▼
+Engineering Specifications
+        │
+        ▼
+Engineering Schemas
+        │
+        ▼
+Engineering Implementation
 ```
 
 Every engineering decision shall be traceable to a higher-level authority.
