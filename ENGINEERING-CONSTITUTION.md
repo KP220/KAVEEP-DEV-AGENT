@@ -467,7 +467,7 @@ Decision authority shall never originate from software implementation alone.
 Engineering decisions shall consider:
 
 - Engineering evidence
-- Architecture
+- ARCHITECTURE.md
 - Specifications
 - Policies
 - Engineering standards
@@ -1363,7 +1363,7 @@ Examples include:
 - Source Code
 - Reports
 - Tests
-- Architecture
+- ARCHITECTURE.md
 - Policies
 
 ---
