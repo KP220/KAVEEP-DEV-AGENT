@@ -181,34 +181,28 @@ Policy dependencies shall be explicit.
 Every repository artifact shall reference higher-level engineering authority.
 
 Implementation
-
 ↓
-
-Specification
-
+Engineering Schemas
 ↓
-
-Architecture
-
+Engineering Specifications
 ↓
-
-Engineering Philosophy
-
+ENGINEERING-WORKFLOW.md
 ↓
-
-Engineering Charter
-
+ENGINEERING-LIFECYCLE.md
 ↓
-
+ARCHITECTURE.md
+↓
+ENGINEERING-PHILOSOPHY.md
+↓
+ENGINEERING-CHARTER.md
+↓
+ENGINEERING-CONSTITUTION.md
+↓
 KAVEEP-POLICY
-
 ↓
-
-Roadmap
-
+KAVEEP Roadmap
 ↓
-
-Constitution
+KAVEEP Constitution
 
 Repository traceability is mandatory.
 
