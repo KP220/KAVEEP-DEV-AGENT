@@ -198,3 +198,67 @@ Every release becomes input for the next engineering cycle.
 Continuous improvement shall preserve engineering identity.
 
 ---
+# Engineering Traceability
+
+Every engineering artifact shall be traceable to a higher-level authority.
+
+Implementation shall trace to Specifications.
+
+Specifications shall trace to Architecture.
+
+Architecture shall trace to Engineering Philosophy.
+
+Engineering Philosophy shall trace to Engineering Charter.
+
+Engineering Charter shall trace to KAVEEP-POLICY.
+
+KAVEEP-POLICY shall remain consistent with the KAVEEP Constitution and Roadmap.
+
+No orphan engineering artifact is allowed.
+
+---
+
+# Engineering Lifecycle
+
+Every official KAVEEP software entity shall follow the approved engineering lifecycle:
+
+```text
+Idea
+↓
+Vision
+↓
+Mission
+↓
+Identity
+↓
+Roadmap
+↓
+Architecture
+↓
+Specification
+↓
+Policy Alignment
+↓
+Engineering Design
+↓
+Implementation
+↓
+Validation
+↓
+Testing
+↓
+Documentation
+↓
+Audit
+↓
+Human Approval
+↓
+Release
+↓
+Operation
+↓
+Observation
+↓
+Continuous Improvement
+↓
+Evolution
