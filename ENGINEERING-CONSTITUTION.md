@@ -998,7 +998,7 @@ They shall never redefine constitutional engineering authority.
 
 ---
 
-# งConstitutional Authority
+# Constitutional Authority
 
 This Engineering Constitution establishes the highest engineering authority within the KAVEEP-DEV-AGENT repository.
 
