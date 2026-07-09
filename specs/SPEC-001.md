@@ -1,6 +1,6 @@
 # SPEC-001
 
-# Repository Intelligence Engine
+# Repository Intelligence Capability
 
 Version
 
@@ -8,7 +8,7 @@ Version
 
 Status
 
-Foundation
+Draft
 
 Repository
 
@@ -20,250 +20,180 @@ Engineering Capability Specification
 
 Authority
 
-KAVEEP Engineering Standards Authority
+ENGINEERING-CONSTITUTION.md
 
----
+------------------------------------------------------------------------
 
 # Purpose
 
-This specification defines the Repository Intelligence Engine.
+Define the Repository Intelligence Capability responsible for observing,
+discovering, analyzing, understanding, classifying, reporting, and
+recommending improvements for KAVEEP repositories.
 
-The Repository Intelligence Engine is responsible for understanding an engineering repository before any engineering recommendation or implementation is performed.
+This capability is read-oriented and does not perform repository
+modifications.
 
-No repository shall be modified until its engineering context has been sufficiently understood.
+------------------------------------------------------------------------
 
----
+# Mission
 
-# Objectives
+Observe
 
-The Repository Intelligence Engine shall:
+↓
 
-- Discover repository structure.
-- Understand repository identity.
-- Analyze repository architecture.
-- Detect engineering standards.
-- Analyze repository dependencies.
-- Assess repository quality.
-- Produce repository intelligence reports.
+Discover
 
----
+↓
+
+Analyze
+
+↓
+
+Understand
+
+↓
+
+Classify
+
+↓
+
+Report
+
+↓
+
+Recommend
+
+------------------------------------------------------------------------
+
+# Scope
+
+This capability applies to all official KAVEEP repositories.
+
+It evaluates repository identity, structure, architecture,
+documentation, specifications, schemas, policies, engineering quality,
+and standards compliance.
+
+------------------------------------------------------------------------
 
 # Responsibilities
 
-The Repository Intelligence Engine is responsible for:
-
-• Repository Discovery
-
-• Repository Classification
-
-• Repository Identity Analysis
-
-• Repository Structure Analysis
-
-• Architecture Detection
-
-• Specification Discovery
-
-• Schema Discovery
-
-• Documentation Discovery
-
-• Dependency Analysis
-
-• Repository Health Assessment
-
-• Engineering Readiness Assessment
-
----
-
-# Repository Discovery
-
-The engine shall identify:
-
-- Repository name
-- Repository purpose
-- Repository type
-- Repository owner
-- Repository version
-- Repository lifecycle stage
-
----
-
-# Repository Identity Analysis
-
-The engine shall determine:
-
-- Vision
-- Mission
-- Identity
-- Authority
-- Responsibilities
-- Scope
-
-Identity shall be preserved throughout engineering activities.
-
----
-
-# Repository Structure Analysis
-
-The engine shall analyze:
-
-- Directories
-- Documentation
-- Specifications
-- Schemas
-- Tests
-- Examples
-- Tools
-- Policies
-
-Missing engineering artifacts shall be reported.
-
----
-
-# Architecture Analysis
-
-The engine shall identify:
-
-- Components
-- Layers
-- Interfaces
-- Trust Boundaries
-- Dependencies
-
-Architecture inconsistencies shall be reported.
-
----
-
-# Specification Analysis
-
-The engine shall:
-
-- Locate specifications.
-- Validate numbering.
-- Detect missing specifications.
-- Detect obsolete specifications.
-- Detect conflicting specifications.
-
----
-
-# Schema Analysis
-
-The engine shall:
-
-- Discover schemas.
-- Validate schema versions.
-- Detect schema compatibility.
-- Detect broken references.
-- Detect missing examples.
-
----
-
-# Dependency Analysis
-
-The engine shall classify:
-
-Internal Dependencies
-
-External Dependencies
-
-Cross-Repository Dependencies
-
-Policy Dependencies
-
-Knowledge Dependencies
-
----
-
-# Repository Health Assessment
-
-The engine shall assess:
-
-Documentation
-
-Architecture
-
-Specifications
-
-Schemas
-
-Testing
-
-Validation
-
-Traceability
-
-Auditability
-
-Maintainability
-
-Each assessment shall include a confidence level.
-
----
-
-# Engineering Readiness
-
-The engine shall determine whether the repository is ready for engineering work.
-
-Possible states:
-
-READY
-
-PARTIALLY_READY
-
-NOT_READY
-
-Engineering shall not begin when the repository is NOT_READY unless explicitly approved.
-
----
+-   Discover repository structure.
+-   Analyze repository identity.
+-   Verify engineering foundations.
+-   Review documentation completeness.
+-   Assess specification coverage.
+-   Assess schema quality.
+-   Detect standards deviations.
+-   Produce engineering reports.
+-   Recommend improvements.
+
+------------------------------------------------------------------------
+
+# Inputs
+
+-   Repository contents
+-   Documentation
+-   Architecture
+-   Specifications
+-   Schemas
+-   Policies
+-   Roadmap
+-   Constitution
+
+------------------------------------------------------------------------
 
 # Outputs
 
-The Repository Intelligence Engine produces:
+-   Repository Report
+-   Repository Health Report
+-   Standards Report
+-   Documentation Report
+-   Architecture Report
+-   Recommendation Report
 
-Repository Report
+------------------------------------------------------------------------
 
-Architecture Summary
+# Capability Engines
 
-Specification Summary
+-   Repository Scanner Engine
+-   Repository Identity Engine
+-   Repository Structure Engine
+-   Repository Standards Engine
+-   Repository Dependency Engine
+-   Repository Documentation Engine
+-   Repository Metrics Engine
+-   Repository Health Engine
+-   Repository Reporter Engine
 
-Dependency Report
+------------------------------------------------------------------------
 
-Engineering Readiness Report
+# Workflow
 
-Risk Report
+Discover Repository
 
-Recommendations
+↓
 
----
+Analyze
+
+↓
+
+Validate
+
+↓
+
+Classify
+
+↓
+
+Generate Reports
+
+↓
+
+Recommend Improvements
+
+------------------------------------------------------------------------
 
 # Constraints
 
-The Repository Intelligence Engine shall not:
+This capability shall not:
 
-- modify repository contents
-- delete files
-- rename files
-- execute engineering actions
+-   modify repositories
+-   edit source code
+-   rewrite specifications
+-   bypass policies
+-   bypass governance
+-   perform destructive actions
 
-Its responsibility is analysis only.
+------------------------------------------------------------------------
 
----
+# Quality Objectives
+
+-   Accuracy
+-   Completeness
+-   Consistency
+-   Traceability
+-   Auditability
+-   Explainability
+
+------------------------------------------------------------------------
 
 # Acceptance Criteria
 
-This specification is satisfied when the engine can:
+The capability is considered complete when it can consistently analyze
+repositories, produce traceable engineering reports, and recommend
+improvements without modifying repository contents.
 
-- understand repository identity
-- analyze repository architecture
-- locate specifications
-- discover schemas
-- identify dependencies
-- assess engineering readiness
-- produce structured engineering reports
+------------------------------------------------------------------------
 
----
+# References
 
-# Guiding Principle
+-   ENGINEERING-CONSTITUTION.md
+-   ENGINEERING-CHARTER.md
+-   ENGINEERING-PHILOSOPHY.md
+-   ARCHITECTURE.md
+-   ENGINEERING-ORGANIZATION.md
+-   ENGINEERING-RESPONSIBILITY-MODEL.md
 
-A repository must be understood before it can be improved.
+------------------------------------------------------------------------
+
+End of Specification
