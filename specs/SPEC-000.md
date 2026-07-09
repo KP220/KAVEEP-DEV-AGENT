@@ -94,33 +94,6 @@ Engineering Schemas
         │
         ▼
 Engineering Implementation
-        │
-        ▼
-ENGINEERING-CONSTITUTION.md
-        │
-        ▼
-ENGINEERING-CHARTER.md
-        │
-        ▼
-ENGINEERING-PHILOSOPHY.md
-        │
-        ▼
-ARCHITECTURE.md
-        │
-        ▼
-ENGINEERING-LIFECYCLE.md
-        │
-        ▼
-ENGINEERING-WORKFLOW.md
-        │
-        ▼
-Engineering Specifications
-        │
-        ▼
-Engineering Schemas
-        │
-        ▼
-Engineering Implementation
 ```
 
 Every engineering specification derives its authority from the Engineering Constitution.
