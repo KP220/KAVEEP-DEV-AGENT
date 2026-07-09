@@ -1,6 +1,6 @@
-# KAVEEP-DEV-AGENT
+# ENGINEERING-CAPABILITY-MODEL
 
-# ENGINEERING CAPABILITY MODEL
+> **Official Engineering Capability Standard for the KAVEEP Ecosystem**
 
 Version
 
@@ -8,317 +8,244 @@ Version
 
 Status
 
-Foundation
+Official
 
-Classification
+Repository
 
-Engineering Capability Reference
+KAVEEP-DEV-AGENT
 
 Authority
 
-KAVEEP Engineering Standards Authority
+ENGINEERING-CONSTITUTION.md
 
----
+------------------------------------------------------------------------
 
 # Purpose
 
-This document defines the official engineering capabilities provided by KAVEEP-DEV-AGENT.
+This document defines the canonical Engineering Capability Model used
+throughout the KAVEEP ecosystem.
 
-Capabilities describe *what the engineering platform is able to accomplish*, independent of implementation technology, AI model, programming language, or runtime.
+Every Engineering Capability shall conform to this standard.
 
-The capability model provides a stable contract between KAVEEP-DEV-AGENT and every other KAVEEP platform.
+------------------------------------------------------------------------
 
----
+# Definition
 
-# Engineering Capability Philosophy
+An Engineering Capability is the highest operational engineering unit
+responsible for a professional engineering domain.
 
-Capabilities remain stable.
+A Capability owns one or more Engineering Engines.
 
-Implementations evolve.
+Capabilities coordinate engineering work but do not directly implement
+runtime behavior.
 
-AI models may change.
+------------------------------------------------------------------------
 
-Engineering standards remain.
+# Engineering Hierarchy
 
----
+``` text
+Engineering Capability
+        │
+        ▼
+Engineering Engine
+        │
+        ▼
+Engineering Task
+        │
+        ▼
+Engineering Report
+```
 
-# Capability Categories
-
-Engineering capabilities are organized into domains.
-
-## 1. Repository Intelligence
-
-Responsible for understanding repositories.
-
-Capabilities
-
-- Repository Discovery
-- Repository Classification
-- Repository Identity Analysis
-- Repository Health Assessment
-- Repository Dependency Analysis
-- Repository Evolution Analysis
-
----
-
-## 2. Requirements Engineering
-
-Responsible for understanding engineering intent.
-
-Capabilities
-
-- Requirement Collection
-- Requirement Analysis
-- Requirement Validation
-- Requirement Traceability
-- Acceptance Criteria Definition
-
----
-
-## 3. Architecture Engineering
-
-Responsible for engineering design.
-
-Capabilities
-
-- Architecture Analysis
-- Architecture Validation
-- Architecture Evolution
-- Architecture Consistency Review
-- Dependency Mapping
-
----
-
-## 4. Specification Engineering
-
-Responsible for engineering specifications.
-
-Capabilities
-
-- Specification Creation
-- Specification Validation
-- Specification Versioning
-- Specification Traceability
-- Specification Quality Review
-
----
-
-## 5. Implementation Engineering
-
-Responsible for software implementation.
-
-Capabilities
-
-- Code Generation
-- Code Refactoring
-- Code Improvement
-- Technical Debt Reduction
-- Configuration Engineering
-
----
-
-## 6. Validation Engineering
-
-Responsible for implementation verification.
-
-Capabilities
-
-- Architecture Validation
-- Specification Validation
-- Traceability Validation
-- Policy Validation
-- Engineering Quality Validation
-
----
-
-## 7. Testing Engineering
-
-Responsible for engineering confidence.
-
-Capabilities
-
-- Unit Testing
-- Integration Testing
-- Regression Testing
-- Performance Testing
-- Security Testing
-- Test Report Generation
-
----
-
-## 8. Documentation Engineering
-
-Responsible for preserving engineering knowledge.
-
-Capabilities
-
-- Documentation Generation
-- Documentation Review
-- API Documentation
-- Architecture Documentation
-- Engineering Reports
-
----
-
-## 9. Engineering Governance
-
-Responsible for engineering compliance.
-
-Capabilities
-
-- Policy Compliance
-- Engineering Review
-- Risk Assessment
-- Approval Preparation
-- Audit Preparation
-
----
-
-## 10. Release Engineering
-
-Responsible for release readiness.
-
-Capabilities
-
-- Release Validation
-- Release Packaging
-- Release Documentation
-- Version Management
-- Release Checklist
-
----
-
-## 11. Continuous Improvement
-
-Responsible for engineering evolution.
-
-Capabilities
-
-- Technical Debt Analysis
-- Refactoring Recommendations
-- Engineering Metrics
-- Quality Improvement
-- Workflow Optimization
-
----
-
-# Capability Independence
-
-Capabilities are independent of:
-
-- Programming Languages
-- Frameworks
-- AI Models
-- Runtime Platforms
-- Operating Systems
-- Cloud Providers
-
-Capabilities define engineering intent rather than implementation.
-
----
-
-# Capability Composition
-
-Complex engineering tasks are created by composing multiple capabilities.
-
-Example
-
-Engineering Request
-
-↓
-
-Repository Intelligence
-
-↓
-
-Requirements Engineering
-
-↓
-
-Architecture Engineering
-
-↓
-
-Implementation Engineering
-
-↓
-
-Validation Engineering
-
-↓
-
-Testing Engineering
-
-↓
-
-Documentation Engineering
-
-↓
-
-Release Engineering
-
----
-
-# Capability Evolution
-
-Capabilities evolve through:
-
-Research
-
-↓
-
-Proposal
-
-↓
-
-Architecture Review
-
-↓
-
-Validation
-
-↓
-
-Approval
-
-↓
-
-Adoption
-
-↓
-
-Continuous Improvement
-
-Capabilities shall remain backward compatible whenever practical.
-
----
+------------------------------------------------------------------------
 
 # Capability Principles
 
-Every capability shall be:
+-   Single responsibility
+-   Clear ownership
+-   Technology independence
+-   Policy compliance
+-   Constitutional compliance
+-   Traceability
+-   Auditability
+-   Continuous improvement
 
-Reusable
+------------------------------------------------------------------------
 
-Composable
+# Capability Components
 
-Observable
+Every capability shall define:
 
-Traceable
+-   Identity
+-   Mission
+-   Scope
+-   Responsibilities
+-   Inputs
+-   Outputs
+-   Interfaces
+-   Engines
+-   Tasks
+-   Reports
+-   Metrics
+-   Constraints
+-   Acceptance Criteria
 
-Auditable
+------------------------------------------------------------------------
 
-Model-Agnostic
+# Capability Responsibilities
 
-Policy-Compliant
+Every capability shall:
 
-Architecture-Aware
+-   Coordinate engineering work
+-   Own engineering engines
+-   Define engineering boundaries
+-   Produce engineering reports
+-   Preserve engineering quality
+-   Preserve engineering traceability
+-   Operate within constitutional authority
 
----
+------------------------------------------------------------------------
 
-# Guiding Principle
+# Capability Interfaces
 
-Engineering capability defines what KAVEEP can do.
+Capabilities interact through documented interfaces only.
 
-Engineering workflow defines how KAVEEP does it.
+Interfaces shall define:
 
-Engineering standards define how well KAVEEP does it.
+-   Inputs
+-   Outputs
+-   Dependencies
+-   Reports
+-   Traceability
+
+------------------------------------------------------------------------
+
+# Capability Inputs
+
+Typical inputs include:
+
+-   Repository
+-   Architecture
+-   Specifications
+-   Schemas
+-   Policies
+-   Engineering Reports
+
+------------------------------------------------------------------------
+
+# Capability Outputs
+
+Typical outputs include:
+
+-   Engineering Reports
+-   Recommendations
+-   Validation Results
+-   Metrics
+-   Traceability Records
+
+------------------------------------------------------------------------
+
+# Capability Engines
+
+Each capability owns one or more engineering engines.
+
+Every engine shall comply with ENGINEERING-ENGINE-STANDARD.md.
+
+------------------------------------------------------------------------
+
+# Capability Tasks
+
+Engineering engines execute engineering tasks.
+
+Tasks shall comply with ENGINEERING-TASK-STANDARD.md.
+
+------------------------------------------------------------------------
+
+# Capability Reports
+
+Every capability shall produce traceable engineering reports.
+
+Reports shall include sufficient evidence to support engineering
+conclusions.
+
+------------------------------------------------------------------------
+
+# Capability Metrics
+
+Recommended metrics:
+
+-   Coverage
+-   Completeness
+-   Consistency
+-   Compliance
+-   Health Score
+-   Risk Score
+-   Quality Score
+
+------------------------------------------------------------------------
+
+# Capability Constraints
+
+Capabilities shall not:
+
+-   Bypass governance
+-   Modify higher authority
+-   Violate policy
+-   Remove traceability
+-   Perform protected actions without approval
+
+------------------------------------------------------------------------
+
+# Governance
+
+Capabilities derive authority from:
+
+``` text
+ENGINEERING-CONSTITUTION.md
+        │
+        ▼
+ENGINEERING-CHARTER.md
+        │
+        ▼
+ENGINEERING-PHILOSOPHY.md
+        │
+        ▼
+ARCHITECTURE.md
+        │
+        ▼
+Capability
+```
+
+------------------------------------------------------------------------
+
+# Traceability
+
+Every capability shall remain traceable from Constitution through
+Report.
+
+------------------------------------------------------------------------
+
+# Acceptance Criteria
+
+A capability is considered compliant when:
+
+-   Responsibilities are documented.
+-   Engines are defined.
+-   Interfaces are documented.
+-   Reports are traceable.
+-   Metrics are measurable.
+-   Constraints are respected.
+
+------------------------------------------------------------------------
+
+# References
+
+-   ENGINEERING-CONSTITUTION.md
+-   ENGINEERING-CHARTER.md
+-   ENGINEERING-PHILOSOPHY.md
+-   ARCHITECTURE.md
+-   ENGINEERING-ENGINE-STANDARD.md
+-   ENGINEERING-TASK-STANDARD.md
+
+------------------------------------------------------------------------
+
+End of Document
