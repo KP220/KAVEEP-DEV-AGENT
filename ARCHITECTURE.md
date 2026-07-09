@@ -296,34 +296,39 @@ Every engineering decision shall be traceable to a higher-level authority.
 
 Every engineering artifact must be traceable.
 
-Implementation
-
-↓
-
-Specification
-
-↓
-
-Architecture
-
-↓
-
-Engineering Philosophy
-
-↓
-
-Engineering Charter
-
-↓
-
+Engineering Implementation
+        │
+        ▼
+Engineering Schemas
+        │
+        ▼
+Engineering Specifications
+        │
+        ▼
+ENGINEERING-WORKFLOW.md
+        │
+        ▼
+ENGINEERING-LIFECYCLE.md
+        │
+        ▼
+ARCHITECTURE.md
+        │
+        ▼
+ENGINEERING-PHILOSOPHY.md
+        │
+        ▼
+ENGINEERING-CHARTER.md
+        │
+        ▼
+ENGINEERING-CONSTITUTION.md
+        │
+        ▼
 KAVEEP-POLICY
-
-↓
-
+        │
+        ▼
 KAVEEP Roadmap
-
-↓
-
+        │
+        ▼
 KAVEEP Constitution
 
 No engineering artifact shall exist without traceability.
