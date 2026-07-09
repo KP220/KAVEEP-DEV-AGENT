@@ -32,7 +32,7 @@ This repository establishes that process.
 
 # Position Inside the Ecosystem
 
-``` text
+```text
 KAVEEP Constitution
         │
         ▼
@@ -42,16 +42,22 @@ KAVEEP Roadmap
 KAVEEP-POLICY
         │
         ▼
+ENGINEERING-CONSTITUTION.md
+        │
+        ▼
 ENGINEERING-CHARTER.md
         │
         ▼
 ENGINEERING-PHILOSOPHY.md
         │
         ▼
-ENGINEERING-CONSTITUTION.md
+ARCHITECTURE.md
         │
         ▼
-Architecture
+ENGINEERING-LIFECYCLE.md
+        │
+        ▼
+ENGINEERING-WORKFLOW.md
         │
         ▼
 Engineering Specifications
