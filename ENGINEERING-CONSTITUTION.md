@@ -161,7 +161,7 @@ ENGINEERING-CHARTER.md
 ENGINEERING-PHILOSOPHY.md
         │
         ▼
-SPEC-000 Engineering Constitution
+ENGINEERING-CONSTITUTION.md
         │
         ▼
 Architecture
