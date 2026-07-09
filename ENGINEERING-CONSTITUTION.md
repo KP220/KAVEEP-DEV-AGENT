@@ -1,5 +1,3 @@
-# SPEC-000
-
 # Engineering Constitution
 
 Version
