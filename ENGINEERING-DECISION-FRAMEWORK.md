@@ -37,35 +37,40 @@ Every engineering decision must be justified through this framework.
 Every engineering decision shall follow the official authority hierarchy.
 
 ```text
-Constitution
-
-↓
-
-Roadmap
-
-↓
-
-Policy
-
-↓
-
-Engineering Charter
-
-↓
-
-Engineering Philosophy
-
-↓
-
-Architecture
-
-↓
-
-Specifications
-
-↓
-
-Implementation
+KAVEEP Constitution
+        │
+        ▼
+KAVEEP Roadmap
+        │
+        ▼
+KAVEEP-POLICY
+        │
+        ▼
+ENGINEERING-CONSTITUTION.md
+        │
+        ▼
+ENGINEERING-CHARTER.md
+        │
+        ▼
+ENGINEERING-PHILOSOPHY.md
+        │
+        ▼
+ARCHITECTURE.md
+        │
+        ▼
+ENGINEERING-LIFECYCLE.md
+        │
+        ▼
+ENGINEERING-WORKFLOW.md
+        │
+        ▼
+Engineering Specifications
+        │
+        ▼
+Engineering Schemas
+        │
+        ▼
+Engineering Implementation
 ```
 
 Lower-level engineering decisions shall never contradict higher-level authority.
