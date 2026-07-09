@@ -995,28 +995,10 @@ The following engineering foundation documents elaborate constitutional engineer
 These documents elaborate engineering practice.
 
 They shall never redefine constitutional engineering authority.
-...
-
-The following engineering foundation documents elaborate constitutional engineering behavior.
-
-- ARCHITECTURE.md
-- ENGINEERING-ORGANIZATION.md
-- ENGINEERING-RESPONSIBILITY-MODEL.md
-- ENGINEERING-LIFECYCLE.md
-- ENGINEERING-WORKFLOW.md
-- ENGINEERING-DECISION-FRAMEWORK.md
-- ENGINEERING-CAPABILITY-MODEL.md
-- ENGINEERING-CONTRACT.md
-- REPOSITORY-STANDARD.md
-- ENGINEERING-GLOSSARY.md
-
-These documents elaborate engineering practice.
-
-They shall never redefine constitutional engineering authority.
 
 ---
 
-# Constitutional Authority
+# งConstitutional Authority
 
 This Engineering Constitution establishes the highest engineering authority within the KAVEEP-DEV-AGENT repository.
 
