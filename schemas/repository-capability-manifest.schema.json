@@ -1,0 +1,166 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kaveep.dev/dev-agent/schemas/repository-capability-manifest.schema.json",
+  "title": "KAVEEP DEV-AGENT Repository Capability Manifest",
+  "description": "Canonical repository capability manifest contract. The manifest records declared repository status and evidence-backed capability claims but grants no execution, write, Git, network, release, approval, policy, governance, or certification authority.",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "manifestVersion",
+    "repository",
+    "packageVersion",
+    "architectureVersion",
+    "authority",
+    "highestSpecifiedMilestone",
+    "highestImplementedMilestone",
+    "highestSelfTestedMilestone",
+    "highestLiveCertifiedMilestone",
+    "overallStatus",
+    "limitations",
+    "capabilities"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "1.0.0"
+    },
+    "manifestVersion": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "repository": {
+      "const": "KAVEEP-DEV-AGENT"
+    },
+    "packageVersion": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "architectureVersion": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "authority": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/authorityPath"
+      },
+      "minItems": 1,
+      "uniqueItems": true,
+      "maxItems": 100
+    },
+    "highestSpecifiedMilestone": {
+      "$ref": "#/$defs/milestoneClaim"
+    },
+    "highestImplementedMilestone": {
+      "$ref": "#/$defs/milestoneClaim"
+    },
+    "highestSelfTestedMilestone": {
+      "$ref": "#/$defs/milestoneClaim"
+    },
+    "highestLiveCertifiedMilestone": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/milestoneClaim"
+        },
+        {
+          "const": "UNVERIFIED"
+        }
+      ]
+    },
+    "overallStatus": {
+      "type": "string",
+      "enum": [
+        "VALID",
+        "DRIFT_DETECTED",
+        "UNVERIFIED",
+        "BLOCKED",
+        "DEPRECATED"
+      ]
+    },
+    "limitations": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 1000
+      },
+      "uniqueItems": true,
+      "maxItems": 200
+    },
+    "capabilities": {
+      "type": "array",
+      "items": {
+        "$ref": "capability-entry.schema.json"
+      },
+      "minItems": 1,
+      "maxItems": 1000
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "overallStatus": {
+            "enum": [
+              "DRIFT_DETECTED",
+              "UNVERIFIED",
+              "BLOCKED",
+              "DEPRECATED"
+            ]
+          }
+        },
+        "required": [
+          "overallStatus"
+        ]
+      },
+      "then": {
+        "properties": {
+          "limitations": {
+            "minItems": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "highestLiveCertifiedMilestone": {
+            "const": "UNVERIFIED"
+          }
+        },
+        "required": [
+          "highestLiveCertifiedMilestone"
+        ]
+      },
+      "then": {
+        "properties": {
+          "limitations": {
+            "contains": {
+              "type": "string",
+              "pattern": "live|Live|LIVE|certif|Certif|CERTIF|runtime|Runtime|RUNTIME|unverified|Unverified|UNVERIFIED"
+            },
+            "minContains": 1
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "authorityPath": {
+      "type": "string",
+      "enum": [
+        "ENGINEERING-CONSTITUTION.md",
+        "ENGINEERING-CHARTER.md",
+        "ENGINEERING-PHILOSOPHY.md",
+        "ARCHITECTURE.md",
+        "ENGINEERING-LIFECYCLE.md",
+        "ENGINEERING-WORKFLOW.md",
+        "REPOSITORY-STANDARD.md"
+      ]
+    },
+    "milestoneClaim": {
+      "type": "string",
+      "pattern": "^SPEC-[0-9]{3}$"
+    }
+  },
+  "additionalProperties": false
+}
