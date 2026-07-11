@@ -246,14 +246,40 @@ function validateGitCorrelation(
     };
   }
 
-  const gitArguments = [
+  const gitInvocation = [
     ...profile.fixedArguments,
     ...normalizedRequest.arguments
   ];
 
+  const [gitCommand, ...gitArguments] =
+    gitInvocation;
+
+  if (
+    typeof gitCommand !== "string" ||
+    gitCommand.length === 0
+  ) {
+    return {
+      approved: false,
+      result: Object.freeze({
+        classification: "BLOCKED",
+        command: "",
+        normalizedArguments: Object.freeze([]),
+        networkAllowed: false,
+        shellAllowed: false,
+        writeAuthorityGranted: false,
+        reason:
+          "Git profile did not produce a valid subcommand.",
+        limitations: Object.freeze([
+          "The operation was not executed.",
+          "Classification is fail-closed."
+        ])
+      })
+    };
+  }
+
   const classificationResult =
     classifyGitOperation({
-      command: profile.executableIdentity,
+      command: gitCommand,
       arguments: gitArguments
     });
 
@@ -1012,12 +1038,10 @@ export const CONTROLLED_PROCESS_RUNNER_CAPABILITIES =
     outputLimitsEnforced: true,
     stdoutAndStderrSeparated: true,
     secretRedactionEnabled: true,
-    gitClassificationRequired:
-      true,
+    gitClassificationRequired: true,
     processTreeTerminationSupport:
       "platform-dependent",
-    terminationLimitationsReported:
-      true
+    terminationLimitationsReported: true
   });
 
 export {
