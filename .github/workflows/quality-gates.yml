@@ -1,0 +1,121 @@
+name: Internal Quality Gates
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-and-test:
+    name: DEV-AGENT Internal Validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out KAVEEP-DEV-AGENT
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install locked dependencies
+        run: npm ci
+
+      - name: Prepare TEST_ONLY external contract doubles
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          echo "::warning title=TEST_ONLY external contracts::These generated schemas are NOT_CANONICAL and NOT_CERTIFICATION_EVIDENCE. They exist only so DEV-AGENT internal schema-resolution mechanics can run without sibling repositories."
+
+          node --input-type=module <<'EOF'
+          import { mkdir, writeFile } from "node:fs/promises";
+          import path from "node:path";
+
+          const testOnlySchema = {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "title": "TEST_ONLY external contract double",
+            "description": "TEST_ONLY. NOT_CANONICAL. NOT_CERTIFICATION_EVIDENCE. This permissive schema exists only to exercise local reference-resolution mechanics during KAVEEP-DEV-AGENT internal tests.",
+            "type": "object",
+            "additionalProperties": true
+          };
+
+          const files = [
+            "../KAVEEP-CORE/schemas/agent-ref.schema.json",
+            "../KAVEEP-CORE/schemas/audit-ref.schema.json",
+            "../KAVEEP-CORE/schemas/capability-ref.schema.json",
+            "../KAVEEP-CORE/schemas/evidence-ref.schema.json",
+            "../KAVEEP-CORE/schemas/policy-ref.schema.json",
+            "../KAVEEP-CORE/schemas/report-envelope.schema.json",
+            "../KAVEEP-CORE/schemas/task-ref.schema.json",
+            "../KAVEEP-POLICY/schemas/approval-request.schema.json",
+            "../KAVEEP-POLICY/schemas/policy-report.schema.json",
+            "../KAVEEP-POLICY/schemas/risk-assessment.schema.json",
+            "../KAVEEP-RO/schemas/common-report.schema.json",
+            "../KAVEEP-SIA/schemas/storage-report.schema.json",
+            "../KAVEEP-COMMAND-CENTER/schemas/command-center-report.schema.json"
+          ];
+
+          const repositories = [
+            "../KAVEEP-CORE",
+            "../KAVEEP-POLICY",
+            "../KAVEEP-RO",
+            "../KAVEEP-SIA",
+            "../KAVEEP-COMMAND-CENTER"
+          ];
+
+          for (const repositoryPath of repositories) {
+            await mkdir(repositoryPath, { recursive: true });
+
+            await writeFile(
+              path.join(repositoryPath, "TEST_ONLY_CONTRACT_DOUBLES.md"),
+              [
+                "# TEST_ONLY External Contract Doubles",
+                "",
+                "These files are generated only for KAVEEP-DEV-AGENT internal tests.",
+                "",
+                "- TEST_ONLY",
+                "- NOT_CANONICAL",
+                "- NOT_CERTIFICATION_EVIDENCE",
+                "",
+                "Passing tests against these files does not prove compatibility",
+                "with the real external KAVEEP repositories.",
+                ""
+              ].join("\n")
+            );
+          }
+
+          for (const file of files) {
+            await mkdir(path.dirname(file), { recursive: true });
+            await writeFile(
+              file,
+              `${JSON.stringify(testOnlySchema, null, 2)}\n`
+            );
+          }
+
+          console.log(
+            `Prepared ${files.length} TEST_ONLY external contract doubles.`
+          );
+          console.log(
+            "External ecosystem compatibility status: UNVERIFIED."
+          );
+          console.log(
+            "These fixtures must never be used as certification evidence."
+          );
+          EOF
+
+      - name: Run DEV-AGENT internal quality gates
+        run: npm test
+
+      - name: Report external ecosystem certification status
+        if: always()
+        shell: bash
+        run: |
+          echo "KAVEEP external ecosystem certification: UNVERIFIED"
+          echo "Reason: canonical sibling-repository contracts were not validated by this workflow."
+          echo "Internal test success must not be interpreted as cross-repository compatibility."
