@@ -1,0 +1,5 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema","$id":"https://kaveep.dev/dev-agent/schemas/durable-recovery-result.schema.json","title":"KAVEEP DEV-AGENT Durable Recovery Result","type":"object",
+  "required":["recoveryId","schemaVersion","sourceRunRef","recoveredRunRef","status","governanceRecheckRequired","restartState","replay","reason"],
+  "properties":{"recoveryId":{"type":"string","pattern":"^recovery_dev_run_[A-Za-z0-9][A-Za-z0-9_-]*$"},"schemaVersion":{"type":"string","pattern":"^[0-9]+\\.[0-9]+\\.[0-9]+$"},"sourceRunRef":{"type":"string","pattern":"^dev_run_[A-Za-z0-9][A-Za-z0-9_-]*$"},"recoveredRunRef":{"type":["string","null"],"pattern":"^dev_run_[A-Za-z0-9][A-Za-z0-9_-]*$"},"status":{"type":"string","enum":["restarted_from_received","blocked"]},"governanceRecheckRequired":{"type":"boolean","const":true},"restartState":{"type":"string","const":"received"},"replay":{"$ref":"durable-replay-result.schema.json"},"reason":{"type":"string","minLength":1}},"additionalProperties":false
+}

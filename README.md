@@ -6,6 +6,11 @@ KAVEEP-DEV-AGENT is the official Software Engineering Authority
 responsible for transforming ideas into trusted KAVEEP software through
 disciplined engineering.
 
+KAVEEP-DEV-AGENT is a Thai-first AI Software Engineering Organization.
+It is not designed as a chatbot or standalone AI coding assistant.
+Its purpose is to engineer trustworthy software systems under governance,
+policy, validation, audit, KCP verification, and human approval.
+
 ------------------------------------------------------------------------
 
 # Repository Identity
@@ -166,6 +171,7 @@ Release
 -   Governance before execution.
 -   Traceability for every engineering artifact.
 -   Human approval for protected engineering actions.
+-   Verified engineering progress over calendar-driven work.
 
 ------------------------------------------------------------------------
 
@@ -182,36 +188,56 @@ Release
 
 # Current Development Status
 
-  Area             Status
-  ---------------- -------------
-  Foundation       Complete
-  Constitution     Complete
-  Specifications   In Progress
-  Schemas          In Progress
-  Examples         Planned
-  Validation       Planned
-  Runtime          Planned
+  Area                         Status
+  ---------------------------- ------------------------
+  Foundation                   Complete
+  Constitution                 Complete
+  Specifications               Implemented through SPEC-020
+  Schemas                      Implemented for current capabilities
+  Examples                     Implemented and validated
+  Validation                   Implemented for current contracts
+  Deterministic Runtime        Implemented through sandbox editing
+  Read-Only Orchestration      Implemented
+  Durable Orchestration        Foundation implemented
+  Sandbox Static Validation    Implemented for Node.js syntax
+  Engineering Brain            Provider-neutral proposal prototype
+  Iterative Coding Loop        Sandbox syntax-validation prototype
+  Reviewed Change/Patch        Deterministic review artifact implemented
+  Exact-Hash Approval Verify   Signed one-time verification prototype
+  Controlled Source Write      Transactional local prototype
+  Durable Write Recovery       Journaled crash-recovery prototype
+  Container Build/Test         Runtime adapter implemented; live daemon pending
+  Policy and KCP Integration   Planned
+  Production Operations       Planned
 
 ------------------------------------------------------------------------
 
 # Repository Roadmap
 
 ``` text
-Foundation
+Foundation and Contracts
     ↓
-Capability Specifications
+Deterministic Read-Only Runtime
     ↓
-Schemas
+Secure Sandbox and File Editing
     ↓
-Examples
+Authority Snapshot, Mission Lock, and Drift Detection
     ↓
-Validation
+Read-Only DEV-Orchestrator
     ↓
-Runtime
+Durable Persistence and Recovery
     ↓
-Command Center Integration
+Policy, Approval, Risk, and KCP Integration
     ↓
-Autonomous Engineering
+Sandbox Build, Test, and Engineering Review
+    ↓
+Controlled Git and Pull Request Delivery
+    ↓
+Replaceable Engineering Brain and Knowledge
+    ↓
+Governed Multi-Agent Engineering
+    ↓
+Continuous Evidence-Based Improvement
 ```
 
 ------------------------------------------------------------------------

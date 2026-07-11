@@ -1,0 +1,399 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kaveep.dev/dev-agent/schemas/repository-intelligence.schema.json",
+  "title": "KAVEEP DEV-AGENT Repository Intelligence",
+  "description": "DEV-AGENT-owned task-oriented repository discovery context. This is not a KAVEEP-RO repository assessment or authorization artifact.",
+  "type": "object",
+  "required": [
+    "intelligenceId",
+    "schemaVersion",
+    "repositoryRef",
+    "repositoryRoot",
+    "repositoryName",
+    "inspectionScope",
+    "status",
+    "startedAt",
+    "completedAt",
+    "summary",
+    "directorySummary",
+    "fileSummary",
+    "detectedArtifacts",
+    "technologyIndicators",
+    "documentationArtifacts",
+    "specificationArtifacts",
+    "schemaArtifacts",
+    "sourceArtifacts",
+    "testArtifacts",
+    "validationEntryPoints",
+    "packageAndBuildFiles",
+    "architectureSignals",
+    "ownershipSignals",
+    "integrationSignals",
+    "relevantFiles",
+    "ignoredPaths",
+    "warnings",
+    "errors",
+    "limitations",
+    "recommendedNextAction"
+  ],
+  "properties": {
+    "intelligenceId": {
+      "type": "string",
+      "pattern": "^repo_intel_[A-Za-z0-9][A-Za-z0-9_-]*$"
+    },
+    "schemaVersion": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "repositoryRef": {
+      "type": "string",
+      "minLength": 1
+    },
+    "repositoryRoot": {
+      "type": "string",
+      "minLength": 1
+    },
+    "repositoryName": {
+      "type": "string",
+      "minLength": 1
+    },
+    "inspectionScope": {
+      "$ref": "#/$defs/inspectionScope"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "inspecting",
+        "completed",
+        "completed_with_warnings",
+        "blocked",
+        "unverified",
+        "unsupported",
+        "no_action"
+      ]
+    },
+    "startedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "completedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 1
+    },
+    "directorySummary": {
+      "$ref": "#/$defs/directorySummary"
+    },
+    "fileSummary": {
+      "$ref": "#/$defs/fileSummary"
+    },
+    "detectedArtifacts": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/artifact"
+      }
+    },
+    "technologyIndicators": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/technologyIndicator"
+      }
+    },
+    "documentationArtifacts": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/pathEvidence"
+      }
+    },
+    "specificationArtifacts": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/pathEvidence"
+      }
+    },
+    "schemaArtifacts": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/pathEvidence"
+      }
+    },
+    "sourceArtifacts": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/pathEvidence"
+      }
+    },
+    "testArtifacts": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/pathEvidence"
+      }
+    },
+    "validationEntryPoints": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/validationEntryPoint"
+      }
+    },
+    "packageAndBuildFiles": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/pathEvidence"
+      }
+    },
+    "architectureSignals": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/signal"
+      }
+    },
+    "ownershipSignals": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/signal"
+      }
+    },
+    "integrationSignals": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/signal"
+      }
+    },
+    "relevantFiles": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "ignoredPaths": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/ignoredPath"
+      }
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/message"
+      }
+    },
+    "errors": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/message"
+      }
+    },
+    "limitations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "evidenceRefs": {
+      "type": "array",
+      "items": {
+        "$ref": "../../KAVEEP-CORE/schemas/evidence-ref.schema.json"
+      }
+    },
+    "auditRefs": {
+      "type": "array",
+      "items": {
+        "$ref": "../../KAVEEP-CORE/schemas/audit-ref.schema.json"
+      }
+    },
+    "roReportRefs": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/externalReportRef"
+      }
+    },
+    "recommendedNextAction": {
+      "type": "string",
+      "enum": [
+        "no_action",
+        "send_to_planning",
+        "request_ro_assessment",
+        "gather_more_evidence",
+        "reduce_scope",
+        "block_request"
+      ]
+    }
+  },
+  "$defs": {
+    "inspectionScope": {
+      "type": "object",
+      "required": [
+        "approvedRootRequired",
+        "readOnly",
+        "maxDepth",
+        "maxFiles",
+        "maxDirectories",
+        "maxReadableFileSizeBytes",
+        "maxRelevantFiles",
+        "symlinkPolicy",
+        "ignoredPathPolicy"
+      ],
+      "properties": {
+        "approvedRootRequired": { "type": "boolean", "const": true },
+        "readOnly": { "type": "boolean", "const": true },
+        "maxDepth": { "type": "integer", "minimum": 0 },
+        "maxFiles": { "type": "integer", "minimum": 0 },
+        "maxDirectories": { "type": "integer", "minimum": 0 },
+        "maxReadableFileSizeBytes": { "type": "integer", "minimum": 0 },
+        "maxRelevantFiles": { "type": "integer", "minimum": 0 },
+        "symlinkPolicy": {
+          "type": "string",
+          "enum": ["do_not_follow"]
+        },
+        "ignoredPathPolicy": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "directorySummary": {
+      "type": "object",
+      "required": ["totalDirectoriesObserved", "directories", "truncated"],
+      "properties": {
+        "totalDirectoriesObserved": { "type": "integer", "minimum": 0 },
+        "directories": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "truncated": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    },
+    "fileSummary": {
+      "type": "object",
+      "required": ["totalFilesObserved", "files", "extensions", "truncated"],
+      "properties": {
+        "totalFilesObserved": { "type": "integer", "minimum": 0 },
+        "files": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "extensions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/extensionCount"
+          }
+        },
+        "truncated": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    },
+    "extensionCount": {
+      "type": "object",
+      "required": ["extension", "count"],
+      "properties": {
+        "extension": { "type": "string" },
+        "count": { "type": "integer", "minimum": 1 }
+      },
+      "additionalProperties": false
+    },
+    "artifact": {
+      "type": "object",
+      "required": ["artifactType", "path", "confidence", "evidence"],
+      "properties": {
+        "artifactType": { "type": "string", "minLength": 1 },
+        "path": { "type": "string", "minLength": 1 },
+        "confidence": {
+          "type": "string",
+          "enum": ["detected", "candidate", "unverified"]
+        },
+        "evidence": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "pathEvidence": {
+      "type": "object",
+      "required": ["path", "kind", "confidence"],
+      "properties": {
+        "path": { "type": "string", "minLength": 1 },
+        "kind": { "type": "string", "minLength": 1 },
+        "confidence": {
+          "type": "string",
+          "enum": ["detected", "candidate", "unverified"]
+        }
+      },
+      "additionalProperties": false
+    },
+    "technologyIndicator": {
+      "type": "object",
+      "required": ["technology", "confidence", "evidence"],
+      "properties": {
+        "technology": { "type": "string", "minLength": 1 },
+        "confidence": {
+          "type": "string",
+          "enum": ["detected", "candidate", "unverified"]
+        },
+        "evidence": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "validationEntryPoint": {
+      "type": "object",
+      "required": ["entryType", "path", "description", "executed"],
+      "properties": {
+        "entryType": { "type": "string", "minLength": 1 },
+        "path": { "type": "string", "minLength": 1 },
+        "description": { "type": "string", "minLength": 1 },
+        "executed": { "type": "boolean", "const": false }
+      },
+      "additionalProperties": false
+    },
+    "signal": {
+      "type": "object",
+      "required": ["signalType", "path", "observation"],
+      "properties": {
+        "signalType": { "type": "string", "minLength": 1 },
+        "path": { "type": "string", "minLength": 1 },
+        "observation": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "ignoredPath": {
+      "type": "object",
+      "required": ["path", "reason"],
+      "properties": {
+        "path": { "type": "string", "minLength": 1 },
+        "reason": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "message": {
+      "type": "object",
+      "required": ["code", "message"],
+      "properties": {
+        "code": { "type": "string", "minLength": 1 },
+        "message": { "type": "string", "minLength": 1 },
+        "path": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "externalReportRef": {
+      "type": "object",
+      "required": ["owner", "schemaRef", "reportId"],
+      "properties": {
+        "owner": {
+          "type": "string",
+          "enum": ["KAVEEP-RO"]
+        },
+        "schemaRef": { "type": "string", "minLength": 1 },
+        "reportId": { "type": "string", "minLength": 1 },
+        "summary": { "type": "string" }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

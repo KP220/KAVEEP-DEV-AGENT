@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kaveep.dev/dev-agent/schemas/dev-orchestration-checkpoint.schema.json",
+  "title": "KAVEEP DEV-AGENT Orchestration Checkpoint",
+  "type": "object",
+  "required": ["checkpointId", "schemaVersion", "runRef", "sequence", "state", "artifactRefs", "governanceResultRefs", "durablyPersisted", "resumable", "createdAt"],
+  "properties": {
+    "checkpointId": { "type": "string", "pattern": "^dev_checkpoint_[A-Za-z0-9][A-Za-z0-9_-]*$" },
+    "schemaVersion": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "runRef": { "type": "string", "pattern": "^dev_run_[A-Za-z0-9][A-Za-z0-9_-]*$" },
+    "sequence": { "type": "integer", "minimum": 1 },
+    "state": { "$ref": "#/$defs/state" },
+    "artifactRefs": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+    "governanceResultRefs": { "type": "array", "items": { "type": "string", "pattern": "^governance_drift_[A-Za-z0-9][A-Za-z0-9_-]*$" }, "uniqueItems": true },
+    "durablyPersisted": { "type": "boolean", "const": false },
+    "resumable": { "type": "boolean", "const": false },
+    "createdAt": { "type": "string", "format": "date-time" }
+  },
+  "$defs": {
+    "state": { "type": "string", "enum": ["received", "governance_prechecked", "interpreted", "repository_inspected", "context_built", "planned", "governance_postchecked", "completed", "blocked", "no_action", "failed"] }
+  },
+  "additionalProperties": false
+}
+

@@ -1,0 +1,607 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kaveep.dev/dev-agent/schemas/engineering-plan.schema.json",
+  "title": "KAVEEP DEV-AGENT Engineering Plan",
+  "description": "DEV-AGENT-owned reusable engineering plan contract. A plan is a governed proposal and does not authorize implementation, merge, release, deployment, or external writes.",
+  "type": "object",
+  "required": [
+    "planId",
+    "schemaVersion",
+    "planVersion",
+    "title",
+    "objective",
+    "status",
+    "requestSummary",
+    "engineeringObjective",
+    "interpretedIntent",
+    "assumptions",
+    "constraints",
+    "acceptanceCriteria",
+    "scope",
+    "steps",
+    "validationIntent",
+    "safety",
+    "executionReadiness",
+    "recommendedNextAction",
+    "createdAt",
+    "updatedAt"
+  ],
+  "properties": {
+    "planId": {
+      "type": "string",
+      "pattern": "^plan_[A-Za-z0-9][A-Za-z0-9_-]*$"
+    },
+    "schemaVersion": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "planVersion": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "objective": {
+      "type": "string",
+      "minLength": 1
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "proposed",
+        "under_review",
+        "waiting_for_evidence",
+        "waiting_for_policy",
+        "waiting_for_approval",
+        "approved_for_sandbox",
+        "blocked",
+        "no_action",
+        "unverified",
+        "superseded",
+        "cancelled"
+      ]
+    },
+    "requestId": {
+      "type": "string",
+      "pattern": "^request_[A-Za-z0-9][A-Za-z0-9_-]*$"
+    },
+    "missionId": {
+      "type": "string",
+      "pattern": "^mission_[A-Za-z0-9][A-Za-z0-9_-]*$"
+    },
+    "workflowId": {
+      "type": "string",
+      "pattern": "^workflow_[A-Za-z0-9][A-Za-z0-9_-]*$"
+    },
+    "taskId": {
+      "type": "string",
+      "pattern": "^task_[A-Za-z0-9][A-Za-z0-9_-]*$"
+    },
+    "sessionRef": {
+      "type": "string",
+      "description": "CORE-owned session identifier. DEV-AGENT references the session by ID and does not redefine the CORE session contract.",
+      "pattern": "^session_[A-Za-z0-9][A-Za-z0-9_-]*$"
+    },
+    "agentRef": {
+      "$ref": "../../KAVEEP-CORE/schemas/agent-ref.schema.json"
+    },
+    "capabilityRefs": {
+      "type": "array",
+      "items": {
+        "$ref": "../../KAVEEP-CORE/schemas/capability-ref.schema.json"
+      }
+    },
+    "policyRefs": {
+      "type": "array",
+      "items": {
+        "$ref": "../../KAVEEP-CORE/schemas/policy-ref.schema.json"
+      }
+    },
+    "auditRefs": {
+      "type": "array",
+      "items": {
+        "$ref": "../../KAVEEP-CORE/schemas/audit-ref.schema.json"
+      }
+    },
+    "evidenceRefs": {
+      "type": "array",
+      "items": {
+        "$ref": "../../KAVEEP-CORE/schemas/evidence-ref.schema.json"
+      }
+    },
+    "taskRef": {
+      "$ref": "../../KAVEEP-CORE/schemas/task-ref.schema.json"
+    },
+    "repositoryRefs": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/repositoryRef"
+      }
+    },
+    "siaReportRefs": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/externalReportRef"
+      }
+    },
+    "roReportRefs": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/externalReportRef"
+      }
+    },
+    "repositoryIntelligenceRefs": {
+      "type": "array",
+      "description": "DEV-AGENT-owned Repository Intelligence context references. These are observations, not RO assessments.",
+      "items": {
+        "type": "string",
+        "pattern": "^repo_intel_[A-Za-z0-9][A-Za-z0-9_-]*$"
+      }
+    },
+    "engineeringContextRef": {
+      "type": "string",
+      "description": "Optional DEV-AGENT Engineering Context reference used to constrain planning input. Context does not authorize execution.",
+      "pattern": "^context_[A-Za-z0-9][A-Za-z0-9_-]*$"
+    },
+    "repositoryContextSummary": {
+      "type": "string",
+      "description": "Concise optional summary from Repository Intelligence. This does not authorize execution."
+    },
+    "relevantFileRefs": {
+      "type": "array",
+      "description": "Optional relevant observed repository paths from Repository Intelligence.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "requestSummary": {
+      "type": "string",
+      "minLength": 1
+    },
+    "engineeringObjective": {
+      "type": "string",
+      "minLength": 1
+    },
+    "interpretedIntent": {
+      "type": "string",
+      "minLength": 1
+    },
+    "assumptions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/assumption"
+      }
+    },
+    "constraints": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "acceptanceCriteria": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "limitations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "scope": {
+      "$ref": "#/$defs/planScope"
+    },
+    "steps": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/planStep"
+      }
+    },
+    "validationIntent": {
+      "$ref": "#/$defs/validationIntent"
+    },
+    "safety": {
+      "$ref": "#/$defs/safetyPlan"
+    },
+    "executionReadiness": {
+      "type": "string",
+      "description": "Planning readiness only. This field does not authorize execution.",
+      "enum": [
+        "not_ready",
+        "needs_evidence",
+        "needs_policy",
+        "needs_approval",
+        "ready_for_sandbox",
+        "blocked",
+        "no_action",
+        "unverified"
+      ]
+    },
+    "blockingReasons": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "recommendedNextAction": {
+      "type": "string",
+      "enum": [
+        "no_action",
+        "gather_more_evidence",
+        "request_policy_evaluation",
+        "request_human_approval",
+        "prepare_sandbox",
+        "revise_plan",
+        "submit_for_review"
+      ]
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updatedAt": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "$defs": {
+    "repositoryRef": {
+      "type": "object",
+      "required": [
+        "repository"
+      ],
+      "properties": {
+        "repository": {
+          "type": "string",
+          "minLength": 1
+        },
+        "owner": {
+          "type": "string",
+          "minLength": 1
+        },
+        "path": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string",
+          "enum": [
+            "target",
+            "reference",
+            "provider",
+            "consumer"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "externalReportRef": {
+      "type": "object",
+      "required": [
+        "owner",
+        "schemaRef",
+        "reportId"
+      ],
+      "properties": {
+        "owner": {
+          "type": "string",
+          "enum": [
+            "KAVEEP-SIA",
+            "KAVEEP-RO",
+            "KAVEEP-POLICY",
+            "KAVEEP-COMMAND-CENTER",
+            "KAVEEP-CORE"
+          ]
+        },
+        "schemaRef": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reportId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "summary": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "assumption": {
+      "type": "object",
+      "required": [
+        "statement",
+        "verificationStatus"
+      ],
+      "properties": {
+        "statement": {
+          "type": "string",
+          "minLength": 1
+        },
+        "verificationStatus": {
+          "type": "string",
+          "enum": [
+            "verified",
+            "unverified",
+            "rejected"
+          ]
+        },
+        "evidenceRef": {
+          "type": "string",
+          "pattern": "^evidence_[A-Za-z0-9][A-Za-z0-9_-]*$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "planScope": {
+      "type": "object",
+      "required": [
+        "targetRepositories",
+        "affectedComponents",
+        "affectedFiles",
+        "excludedFiles",
+        "inScope",
+        "outOfScope"
+      ],
+      "properties": {
+        "targetRepositories": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "affectedComponents": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "affectedFiles": {
+          "type": "array",
+          "description": "Proposed impact only. This is not proof that files were modified.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "excludedFiles": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "inScope": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "outOfScope": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "planStep": {
+      "type": "object",
+      "required": [
+        "stepId",
+        "sequence",
+        "title",
+        "actionType",
+        "approvalRequired",
+        "status"
+      ],
+      "properties": {
+        "stepId": {
+          "type": "string",
+          "pattern": "^step_[A-Za-z0-9][A-Za-z0-9_-]*$"
+        },
+        "sequence": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string"
+        },
+        "actionType": {
+          "type": "string",
+          "enum": [
+            "inspect",
+            "analyze",
+            "design",
+            "propose",
+            "create",
+            "modify",
+            "refactor",
+            "validate",
+            "test",
+            "document",
+            "review",
+            "report",
+            "rollback_prepare"
+          ]
+        },
+        "targetRefs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "requiredInputs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "expectedOutputs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "dependencies": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "validationRequirements": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "riskNotes": {
+          "type": "string"
+        },
+        "approvalRequired": {
+          "type": "boolean"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "planned",
+            "waiting_for_input",
+            "waiting_for_policy",
+            "waiting_for_approval",
+            "blocked",
+            "no_action",
+            "unverified",
+            "superseded",
+            "cancelled"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "validationIntent": {
+      "type": "object",
+      "required": [
+        "testPlan",
+        "validationPlan",
+        "lintPlan",
+        "buildPlan",
+        "reviewPlan",
+        "rollbackPlan"
+      ],
+      "properties": {
+        "testPlan": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "validationPlan": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "lintPlan": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "buildPlan": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "reviewPlan": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "rollbackPlan": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "safetyPlan": {
+      "type": "object",
+      "required": [
+        "riskLevel",
+        "sandboxRequired",
+        "protectedActions",
+        "planAuthorizesExecution"
+      ],
+      "properties": {
+        "riskLevel": {
+          "type": "string",
+          "description": "DEV-AGENT planning summary only. Canonical risk assessment is owned by KAVEEP-POLICY.",
+          "enum": [
+            "low",
+            "moderate",
+            "high",
+            "critical",
+            "unverified"
+          ]
+        },
+        "riskAssessmentRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/externalReportRef"
+          }
+        },
+        "policyEvaluationRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/externalReportRef"
+          }
+        },
+        "approvalRequestRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/externalReportRef"
+          }
+        },
+        "sandboxRequired": {
+          "type": "boolean"
+        },
+        "sandboxRequirements": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "protectedActions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "file_write",
+              "external_write",
+              "git_write",
+              "merge",
+              "release",
+              "deployment",
+              "destructive_action"
+            ]
+          }
+        },
+        "planAuthorizesExecution": {
+          "type": "boolean",
+          "description": "Must be false. Engineering plans are proposals, not execution authorization.",
+          "const": false
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

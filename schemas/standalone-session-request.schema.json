@@ -1,0 +1,18 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema","$id":"https://kaveep.dev/dev-agent/schemas/standalone-session-request.schema.json","title":"KAVEEP Standalone Session Request","type":"object",
+  "required":["sessionRequestId","schemaVersion","command","repositoryRoot","authoritySnapshot","missionLock","brain","sandboxLimits","loop","container","status","createdAt"],
+  "properties":{
+    "sessionRequestId":{"type":"string","pattern":"^standalone_session_request_[A-Za-z0-9][A-Za-z0-9_-]*$"},
+    "schemaVersion":{"type":"string","const":"1.0.0"},"command":{"type":"string","minLength":1},"repositoryRoot":{"type":"string","minLength":1},
+    "authoritySnapshot":{"$ref":"authority-snapshot.schema.json"},"missionLock":{"$ref":"mission-lock.schema.json"},
+    "brain":{"type":"object","required":["providerId","model","budget","maxContextFiles"],"properties":{
+      "providerId":{"type":"string","pattern":"^[a-z][a-z0-9_-]*$"},"model":{"type":"string","minLength":1},
+      "budget":{"type":"object","required":["maxContextCharacters","maxOutputTokens","maxEdits","timeoutMs"],"properties":{"maxContextCharacters":{"type":"integer","minimum":1},"maxOutputTokens":{"type":"integer","minimum":1},"maxEdits":{"type":"integer","minimum":1,"maximum":100},"timeoutMs":{"type":"integer","minimum":1000}},"additionalProperties":false},
+      "maxContextFiles":{"type":"integer","minimum":1,"maximum":100},"mode":{"type":"string","enum":["proposal_loop","dynamic_tool_loop"]},"maxDynamicTurns":{"type":"integer","minimum":1,"maximum":30},"maxDynamicToolCalls":{"type":"integer","minimum":1,"maximum":60},"maxToolResultCharacters":{"type":"integer","minimum":100,"maximum":200000},"maxTranscriptCharacters":{"type":"integer","minimum":1000,"maximum":1000000}},"additionalProperties":false},
+    "sandboxLimits":{"$ref":"sandbox-request.schema.json#/$defs/resourceLimits"},
+    "workspaceIndex":{"type":"object","required":["enabled","indexRoot","limits","retrieval"],"properties":{"enabled":{"type":"boolean"},"indexRoot":{"type":"string","minLength":1},"limits":{"type":"object","properties":{"maxFiles":{"type":"integer","minimum":1},"maxDirectories":{"type":"integer","minimum":1},"maxDepth":{"type":"integer","minimum":1},"maxFileBytes":{"type":"integer","minimum":1}},"additionalProperties":false},"retrieval":{"type":"object","properties":{"maxResults":{"type":"integer","minimum":1,"maximum":100},"maxSnippetCharacters":{"type":"integer","minimum":1},"maxContextCharacters":{"type":"integer","minimum":1}},"additionalProperties":false}},"additionalProperties":false},
+    "loop":{"type":"object","required":["maxAttempts"],"properties":{"maxAttempts":{"type":"integer","minimum":1,"maximum":5},"semanticMaxAttempts":{"type":"integer","minimum":0,"maximum":3},"maxSemanticFeedbackCharacters":{"type":"integer","minimum":100,"maximum":100000}},"additionalProperties":false},
+    "container":{"type":"object","required":["enabled","required","executionProfile","image","allowedImages","operations","limits"],"properties":{"enabled":{"type":"boolean"},"required":{"type":"boolean"},"executionProfile":{"type":"string","enum":["node","python","go","rust"]},"image":{"type":"string"},"allowedImages":{"type":"array","items":{"type":"string"}},"operations":{"type":"array","items":{"type":"string","enum":["lint","typecheck","test","build"]}},"limits":{"type":"object"}},"additionalProperties":false},
+    "status":{"type":"string","const":"proposed"},"createdAt":{"type":"string","format":"date-time"}
+  },"additionalProperties":false
+}

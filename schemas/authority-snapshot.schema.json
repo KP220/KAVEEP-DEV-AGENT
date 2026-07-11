@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kaveep.dev/dev-agent/schemas/authority-snapshot.schema.json",
+  "title": "KAVEEP DEV-AGENT Authority Snapshot",
+  "description": "Read-only evidence snapshot of explicitly supplied authority documents. It does not create or replace authority.",
+  "type": "object",
+  "required": ["authoritySnapshotId", "schemaVersion", "repositoryRoot", "authorityChain", "authorityDocuments", "limitations", "warnings", "evidenceRefs", "status", "createdAt"],
+  "properties": {
+    "authoritySnapshotId": { "type": "string", "pattern": "^authority_snapshot_[A-Za-z0-9][A-Za-z0-9_-]*$" },
+    "schemaVersion": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "repositoryRoot": { "type": "string", "minLength": 1 },
+    "authorityChain": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["precedence", "authorityType", "ownerRepository", "documentRef"],
+        "properties": {
+          "precedence": { "type": "integer", "minimum": 1 },
+          "authorityType": { "type": "string", "enum": ["master_book", "constitution", "roadmap", "policy", "engineering_constitution", "charter", "philosophy", "architecture", "specification", "other"] },
+          "ownerRepository": { "type": "string", "pattern": "^KAVEEP[A-Za-z0-9_-]*$" },
+          "documentRef": { "type": "string", "pattern": "^authority_document_[A-Za-z0-9][A-Za-z0-9_-]*$" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "authorityDocuments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["documentId", "path", "sha256", "bytes", "verificationStatus"],
+        "properties": {
+          "documentId": { "type": "string", "pattern": "^authority_document_[A-Za-z0-9][A-Za-z0-9_-]*$" },
+          "path": { "type": "string", "minLength": 1 },
+          "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+          "bytes": { "type": "integer", "minimum": 0 },
+          "verificationStatus": { "type": "string", "const": "verified" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "limitations": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "warnings": { "type": "array", "items": { "$ref": "#/$defs/message" } },
+    "evidenceRefs": { "type": "array", "items": { "type": "string", "pattern": "^evidence_[A-Za-z0-9][A-Za-z0-9_-]*$" } },
+    "status": { "type": "string", "enum": ["verified", "unverified", "blocked"] },
+    "createdAt": { "type": "string", "format": "date-time" }
+  },
+  "$defs": {
+    "message": {
+      "type": "object",
+      "required": ["code", "message"],
+      "properties": { "code": { "type": "string", "minLength": 1 }, "message": { "type": "string", "minLength": 1 }, "path": { "type": "string" } },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
+

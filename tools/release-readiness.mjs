@@ -1,0 +1,3 @@
+import path from "node:path";
+import { assessReleaseReadiness } from "../src/release/release-readiness.mjs";
+const status = process.argv.includes("--container-certified") ? "certified" : process.env.KAVEEP_CONTAINER_CERTIFICATION_STATUS ?? "runtime_unavailable"; const dpapi = process.argv.includes("--dpapi-certified") ? "certified" : process.env.KAVEEP_DPAPI_CERTIFICATION_STATUS ?? "not_certified"; const report = await assessReleaseReadiness(path.resolve("."), { dockerCertificationStatus: status, dpapiCertificationStatus: dpapi }); process.stdout.write(`${JSON.stringify(report, null, 2)}\n`); if (!report.installablePreview) process.exitCode = 1;

@@ -1,0 +1,27 @@
+import assert from "node:assert/strict";
+import { execFileSync } from "node:child_process";
+import { mkdtemp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
+import os from "node:os";
+import path from "node:path";
+import { EnvironmentSecretProvider, createLocalConfig, loadLocalConfig } from "../src/config/local-config.mjs";
+import { runEnvironmentDoctor } from "../src/config/environment-doctor.mjs";
+import { loadSchema, validateValue } from "./validate-examples.mjs";
+
+const root = await mkdtemp(path.join(os.tmpdir(), "kaveep-config-test-")); const repository = path.join(root, "repository"); const data = path.join(root, "data"); const configPath = path.join(root, "config.json"); const secret = "sk-super-secret-never-leak-123456"; const clock = () => new Date("2026-07-11T00:00:00.000Z");
+try {
+  await mkdir(repository); const config = await createLocalConfig({ configPath, repositoryRoot: repository, dataRoot: data, model: "explicit-model", executionProfile: "node", image: "node:22-bookworm-slim" }, { clock });
+  assert.equal(config.provider.secretReference, "OPENAI_API_KEY"); assert.equal(config.provider.model, "explicit-model"); assert.equal(JSON.stringify(config).includes(secret), false);
+  const loaded = await loadLocalConfig(configPath); assert.equal(loaded.dataRoot, await import("node:fs/promises").then(({ realpath }) => realpath(data)));
+  await assert.rejects(() => createLocalConfig({ configPath: path.join(root, "bad.json"), repositoryRoot: repository, dataRoot: path.join(repository, ".kaveep"), model: "model" }), /isolated/);
+  const provider = new EnvironmentSecretProvider({ OPENAI_API_KEY: secret }); const value = provider.resolve("OPENAI_API_KEY"); assert.equal(value.reveal(), secret); assert.equal(String(value), "[REDACTED]"); assert.equal(JSON.stringify(value), '"[REDACTED]"'); assert.equal(JSON.stringify(provider).includes(secret), false);
+  const adapter = { async run(file) { return String(file).toLowerCase().includes("git") ? { code: 0, stdout: "git version test", stderr: "" } : { code: 0, stdout: "29.0.0", stderr: "" }; } };
+  const ready = await runEnvironmentDoctor(configPath, { processAdapter: adapter, dockerExecutable: process.execPath, environment: { OPENAI_API_KEY: secret } }); assert.equal(ready.status, "ready"); assert.equal(ready.readyForStandalone, true); assert.equal(JSON.stringify(ready).includes(secret), false); assert(JSON.stringify(ready).includes("[REDACTED]"));
+  const missing = await runEnvironmentDoctor(configPath, { processAdapter: { run: async () => ({ code: 1, stdout: "", stderr: "offline" }) }, dockerExecutable: process.execPath, environment: {} }); assert.equal(missing.status, "blocked"); assert.equal(missing.readyForStandalone, false); assert.equal(missing.checks.find((item) => item.id === "container").status, "failed"); assert.equal(missing.checks.find((item) => item.id === "provider_secret").status, "failed");
+  const authority = { authoritySnapshotId: "authority_snapshot_config_001", schemaVersion: "1.0.0", repositoryRoot: config.repositoryRoot, authorityChain: [{ precedence: 1, authorityType: "engineering_constitution", ownerRepository: "KAVEEP-DEV-AGENT", documentRef: "authority_document_config_001" }], authorityDocuments: [{ documentId: "authority_document_config_001", path: "ENGINEERING-CONSTITUTION.md", sha256: "a".repeat(64), bytes: 1, verificationStatus: "verified" }], limitations: ["Test evidence."], warnings: [], evidenceRefs: ["evidence_config_001"], status: "verified", createdAt: clock().toISOString() };
+  const mission = { missionLockId: "mission_lock_config_001", schemaVersion: "1.0.0", authoritySnapshotRef: authority.authoritySnapshotId, lockedPrinciples: [{ principleId: "principle_config_001", name: "Human Authority", statement: "Human authority remains above AI autonomy.", sourceDocumentRef: "authority_document_config_001" }], protectedArtifacts: [{ path: "ENGINEERING-CONSTITUTION.md", protectionLevel: "governance_locked", reason: "Governance process required." }], prohibitedAutonomousChanges: ["governance"], kcpRequiredChanges: ["architecture"], humanApprovalRequiredChanges: ["source_write_back"], limitations: ["No authority granted."], status: "active", createdAt: clock().toISOString() };
+  const authorityFile = path.join(root, "authority.json"), missionFile = path.join(root, "mission.json"), requestFile = path.join(root, "request.json"); await writeFile(authorityFile, JSON.stringify(authority)); await writeFile(missionFile, JSON.stringify(mission));
+  execFileSync(process.execPath, [path.resolve("tools/kaveep.mjs"), "request", configPath, authorityFile, missionFile, requestFile, "แก้ไข", "src/index.mjs"], { cwd: path.resolve("."), windowsHide: true });
+  const generated = JSON.parse(await readFile(requestFile, "utf8")); const requestSchemaPath = path.resolve("schemas/standalone-session-request.schema.json"), requestSchema = await loadSchema(requestSchemaPath), requestErrors = []; await validateValue(generated, requestSchema, { schemaPath: requestSchemaPath, rootSchema: requestSchema }, "$", requestErrors); assert.deepEqual(requestErrors, []); assert.equal(generated.container.executionProfile, "node"); assert.equal(generated.workspaceIndex.indexRoot, config.roots.workspaceIndex);
+  assert.equal((await readFile(configPath, "utf8")).includes(secret), false);
+  console.log("PASSED local config/doctor; isolated roots; explicit model/profile; secret redaction; Docker/key fail-closed; no credential persistence");
+} finally { await rm(root, { recursive: true, force: true }); }

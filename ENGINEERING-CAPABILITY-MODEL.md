@@ -105,6 +105,56 @@ Every capability shall:
 
 ------------------------------------------------------------------------
 
+# Engineering Capability Charter
+
+The Engineering Capability Charter defines the official commitments of every KAVEEP-DEV-AGENT capability.
+
+Every capability shall exist to improve professional software engineering outcomes rather than merely complete isolated tasks.
+
+Every capability shall:
+
+-   preserve Thai-first human communication where human interaction is required.
+-   operate as part of an AI Software Engineering Organization.
+-   respect the Engineering Constitution, Charter, Philosophy, Architecture, Lifecycle, Workflow, Specifications, and Schemas.
+-   produce traceable engineering evidence.
+-   prefer verified engineering progress over calendar-driven completion.
+-   improve future engineering work by preserving reusable knowledge and reports.
+-   remain replaceable, auditable, reviewable, and bounded.
+-   request human approval for protected engineering actions.
+
+Every capability shall avoid:
+
+-   behaving as an unconstrained chatbot.
+-   treating code generation as engineering completion.
+-   bypassing repository discovery.
+-   bypassing validation, audit, KCP verification, or approval.
+-   depending permanently on one AI model provider.
+
+The following official capability families establish the foundation architecture.
+
+-   Thai Command Interface Capability
+-   Thai Command Interpreter Capability
+-   DEV-Orchestration Capability
+-   Policy Evaluation Capability
+-   Planning Capability
+-   Planning Engine Capability
+-   Repository Intelligence Capability
+-   Context Building Capability
+-   Engineering Brain Capability
+-   Tool Orchestration Capability
+-   Sandbox Execution Capability
+-   Validation Capability
+-   Audit Capability
+-   KCP Verification Capability
+-   Approval Gateway Capability
+-   Pull Request Preparation Capability
+-   Engineering Experience Capability
+-   Engineering Knowledge Capability
+
+Each capability family may later receive its own specification when implementation authority is approved.
+
+------------------------------------------------------------------------
+
 # Capability Interfaces
 
 Capabilities interact through documented interfaces only.

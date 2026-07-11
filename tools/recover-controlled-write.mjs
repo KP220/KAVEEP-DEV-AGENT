@@ -1,0 +1,1 @@
+import{recoverWriteTransaction}from"../src/writeback/durable-write-transaction.mjs";const p=process.argv[2];if(!p)throw new Error("Usage: node tools/recover-controlled-write.mjs <journal.json>");const result=await recoverWriteTransaction(p);process.stdout.write(JSON.stringify(result,null,2)+"\n");if(!["recovered","already_terminal"].includes(result.status))process.exitCode=1;

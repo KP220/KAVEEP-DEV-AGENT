@@ -1,0 +1,215 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kaveep.dev/dev-agent/schemas/engineering-request.schema.json",
+  "title": "KAVEEP DEV-AGENT Engineering Request",
+  "description": "DEV-AGENT-owned interpreted engineering request. This is not a Command Center mission, workflow, task, POLICY decision, or execution authorization.",
+  "type": "object",
+  "required": [
+    "requestId",
+    "schemaVersion",
+    "language",
+    "originalCommand",
+    "normalizedCommand",
+    "requestSummary",
+    "interpretedIntent",
+    "taskType",
+    "requestedActions",
+    "constraints",
+    "acceptanceCriteria",
+    "assumptions",
+    "detectedAmbiguities",
+    "missingContext",
+    "preliminaryRiskIndicators",
+    "requestedAutonomyLevel",
+    "approvalLikelyRequired",
+    "planningReadiness",
+    "status",
+    "recommendedNextAction",
+    "createdAt"
+  ],
+  "properties": {
+    "requestId": {
+      "type": "string",
+      "pattern": "^request_[A-Za-z0-9][A-Za-z0-9_-]*$"
+    },
+    "schemaVersion": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "language": {
+      "type": "string",
+      "enum": ["thai", "english", "mixed", "unknown"]
+    },
+    "originalCommand": {
+      "type": "string"
+    },
+    "normalizedCommand": {
+      "type": "string"
+    },
+    "requestSummary": {
+      "type": "string"
+    },
+    "interpretedIntent": {
+      "type": "string"
+    },
+    "taskType": {
+      "type": "string",
+      "enum": [
+        "repository_analysis",
+        "architecture_design",
+        "specification_creation",
+        "schema_creation",
+        "documentation_update",
+        "code_creation",
+        "code_modification",
+        "refactoring",
+        "bug_investigation",
+        "test_creation",
+        "validation",
+        "review",
+        "report_generation",
+        "repository_creation",
+        "agent_creation",
+        "unknown"
+      ]
+    },
+    "targetRepositories": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "targetFiles": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "targetComponents": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "requestedActions": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "inspect",
+          "analyze",
+          "design",
+          "plan",
+          "propose",
+          "create",
+          "modify",
+          "refactor",
+          "validate",
+          "test",
+          "document",
+          "review",
+          "report"
+        ]
+      }
+    },
+    "constraints": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "acceptanceCriteria": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "assumptions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["statement", "verificationStatus"],
+        "properties": {
+          "statement": { "type": "string" },
+          "verificationStatus": {
+            "type": "string",
+            "enum": ["verified", "unverified", "rejected"]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "detectedAmbiguities": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "missingContext": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "preliminaryRiskIndicators": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["indicator", "category", "severity"],
+        "properties": {
+          "indicator": { "type": "string" },
+          "category": {
+            "type": "string",
+            "enum": [
+              "delete",
+              "move",
+              "rename",
+              "overwrite",
+              "external_write",
+              "commit",
+              "push",
+              "merge",
+              "release",
+              "deploy",
+              "publish",
+              "operating_system_change",
+              "credential_access",
+              "unknown"
+            ]
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["low", "moderate", "high", "critical", "unverified"]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "requestedAutonomyLevel": {
+      "type": "string",
+      "enum": ["interpret_only", "plan_only", "propose_only", "unknown"]
+    },
+    "approvalLikelyRequired": {
+      "type": "boolean"
+    },
+    "planningReadiness": {
+      "type": "string",
+      "enum": ["ready", "needs_clarification", "blocked", "unverified", "unsupported"]
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "received",
+        "interpreted",
+        "needs_clarification",
+        "ready_for_planning",
+        "blocked",
+        "no_action",
+        "unverified",
+        "unsupported"
+      ]
+    },
+    "recommendedNextAction": {
+      "type": "string",
+      "enum": [
+        "no_action",
+        "ask_clarifying_question",
+        "send_to_planning",
+        "request_policy_evaluation",
+        "reject_unsupported",
+        "block_protected_action"
+      ]
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "additionalProperties": false
+}

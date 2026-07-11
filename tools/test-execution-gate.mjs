@@ -1,0 +1,17 @@
+import assert from "node:assert/strict";
+import { evaluateExecutionGate, evaluateSandboxPreparationGate } from "../src/gates/execution-gate.mjs";
+const plan={planId:"plan_gate_001",requestId:"request_gate_001",status:"proposed",safety:{planAuthorizesExecution:false,protectedActions:[]}};
+const request={toolRequestId:"tool_request_gate_001",toolId:"file.stat",requestedOperation:"inspect",policyEvaluationRefs:[],approvalRequestRefs:[],evidenceRefs:["evidence_gate_001"],auditRefs:[]};
+assert.equal(evaluateExecutionGate(plan,request).decision,"allow_read_only");
+assert.equal(evaluateExecutionGate(plan,{...request,evidenceRefs:[]}).decision,"unverified");
+assert.equal(evaluateExecutionGate({...plan,safety:{planAuthorizesExecution:false,protectedActions:["git_write"]}},request).decision,"waiting_for_policy");
+assert.equal(evaluateExecutionGate(plan,{...request,toolId:"file.write",policyEvaluationRefs:["policy_1"]}).decision,"waiting_for_approval");
+assert.equal(evaluateExecutionGate(plan,request,{policyEvaluations:[{status:"denied"}]}).decision,"blocked");
+assert.equal(evaluateExecutionGate({...plan,safety:{planAuthorizesExecution:true,protectedActions:[]}},request).decision,"blocked");
+const sandboxRequest={sandboxRequestId:"sandbox_request_gate_001",requestRef:plan.requestId,planRef:plan.planId,evidenceRefs:[{evidenceId:"evidence_gate_001"}],auditRefs:[]};
+const sandboxGate=evaluateSandboxPreparationGate(plan,sandboxRequest);
+assert.equal(sandboxGate.decision,"allow_sandbox_preparation");
+assert.equal(sandboxGate.sandboxRequestRef,sandboxRequest.sandboxRequestId);
+assert.equal(evaluateSandboxPreparationGate(plan,{...sandboxRequest,evidenceRefs:[]}).decision,"unverified");
+assert.equal(evaluateSandboxPreparationGate({...plan,safety:{planAuthorizesExecution:true,protectedActions:[]}},sandboxRequest).decision,"blocked");
+console.log("PASSED execution gate tests");

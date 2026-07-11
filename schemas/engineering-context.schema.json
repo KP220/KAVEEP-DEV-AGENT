@@ -1,0 +1,185 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kaveep.dev/dev-agent/schemas/engineering-context.schema.json",
+  "title": "KAVEEP DEV-AGENT Engineering Context",
+  "description": "DEV-AGENT-owned deterministic selection of repository observations relevant to one Engineering Request. This artifact is context only and does not represent review, policy, approval, or execution.",
+  "type": "object",
+  "required": [
+    "contextId",
+    "schemaVersion",
+    "requestRef",
+    "repositoryIntelligenceRef",
+    "repositoryRoot",
+    "relevantFiles",
+    "relevantDirectories",
+    "relevantSchemas",
+    "relevantSpecifications",
+    "relevantDocumentation",
+    "relevantExamples",
+    "relevantValidationEntryPoints",
+    "relevantTests",
+    "architectureContext",
+    "ownershipContext",
+    "integrationContext",
+    "ignoredArtifacts",
+    "assumptions",
+    "missingContext",
+    "limitations",
+    "warnings",
+    "evidenceRefs",
+    "status"
+  ],
+  "properties": {
+    "contextId": {
+      "type": "string",
+      "pattern": "^context_[A-Za-z0-9][A-Za-z0-9_-]*$"
+    },
+    "schemaVersion": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "requestRef": {
+      "type": "string",
+      "pattern": "^request_[A-Za-z0-9][A-Za-z0-9_-]*$"
+    },
+    "repositoryIntelligenceRef": {
+      "type": "string",
+      "pattern": "^repo_intel_[A-Za-z0-9][A-Za-z0-9_-]*$"
+    },
+    "repositoryRoot": {
+      "type": "string",
+      "minLength": 1
+    },
+    "relevantFiles": { "$ref": "#/$defs/contextArtifacts" },
+    "relevantDirectories": { "$ref": "#/$defs/contextArtifacts" },
+    "relevantSchemas": { "$ref": "#/$defs/contextArtifacts" },
+    "relevantSpecifications": { "$ref": "#/$defs/contextArtifacts" },
+    "relevantDocumentation": { "$ref": "#/$defs/contextArtifacts" },
+    "relevantExamples": { "$ref": "#/$defs/contextArtifacts" },
+    "relevantValidationEntryPoints": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/validationEntryPoint" }
+    },
+    "relevantTests": { "$ref": "#/$defs/contextArtifacts" },
+    "architectureContext": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/contextSignal" }
+    },
+    "ownershipContext": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/contextSignal" }
+    },
+    "integrationContext": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/contextSignal" }
+    },
+    "ignoredArtifacts": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/ignoredArtifact" }
+    },
+    "assumptions": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/assumption" }
+    },
+    "missingContext": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "limitations": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "warnings": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/message" }
+    },
+    "evidenceRefs": {
+      "type": "array",
+      "items": {
+        "$ref": "../../KAVEEP-CORE/schemas/evidence-ref.schema.json"
+      }
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "completed",
+        "completed_with_warnings",
+        "needs_context",
+        "blocked",
+        "unsupported",
+        "no_action",
+        "unverified"
+      ]
+    }
+  },
+  "$defs": {
+    "contextArtifacts": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/contextArtifact" }
+    },
+    "contextArtifact": {
+      "type": "object",
+      "required": ["path", "relevanceReason", "sourceField"],
+      "properties": {
+        "path": { "type": "string", "minLength": 1 },
+        "relevanceReason": { "type": "string", "minLength": 1 },
+        "sourceField": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "validationEntryPoint": {
+      "type": "object",
+      "required": ["path", "entryType", "description", "relevanceReason", "executed"],
+      "properties": {
+        "path": { "type": "string", "minLength": 1 },
+        "entryType": { "type": "string", "minLength": 1 },
+        "description": { "type": "string", "minLength": 1 },
+        "relevanceReason": { "type": "string", "minLength": 1 },
+        "executed": { "type": "boolean", "const": false }
+      },
+      "additionalProperties": false
+    },
+    "contextSignal": {
+      "type": "object",
+      "required": ["signalType", "path", "observation"],
+      "properties": {
+        "signalType": { "type": "string", "minLength": 1 },
+        "path": { "type": "string", "minLength": 1 },
+        "observation": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "ignoredArtifact": {
+      "type": "object",
+      "required": ["path", "reason"],
+      "properties": {
+        "path": { "type": "string", "minLength": 1 },
+        "reason": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "assumption": {
+      "type": "object",
+      "required": ["statement", "verificationStatus"],
+      "properties": {
+        "statement": { "type": "string", "minLength": 1 },
+        "verificationStatus": {
+          "type": "string",
+          "enum": ["verified", "unverified", "rejected"]
+        }
+      },
+      "additionalProperties": false
+    },
+    "message": {
+      "type": "object",
+      "required": ["code", "message"],
+      "properties": {
+        "code": { "type": "string", "minLength": 1 },
+        "message": { "type": "string", "minLength": 1 },
+        "path": { "type": "string" }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

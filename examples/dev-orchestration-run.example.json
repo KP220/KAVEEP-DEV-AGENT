@@ -1,0 +1,62 @@
+{
+  "runId": "dev_run_example_001",
+  "schemaVersion": "1.0.0",
+  "command": "ตรวจสอบ repository และสร้างแผนวิศวกรรม",
+  "repositoryRoot": "C:/repositories/KAVEEP-DEV-AGENT",
+  "authoritySnapshotRef": "authority_snapshot_example_001",
+  "missionLockRef": "mission_lock_example_001",
+  "state": "blocked",
+  "terminal": true,
+  "transitions": [
+    {
+      "sequence": 1,
+      "fromState": "received",
+      "toState": "blocked",
+      "stage": "governance_precheck",
+      "outcome": "blocked",
+      "reason": "Pre-orchestration governance evidence is not aligned.",
+      "artifactRef": "governance_drift_example_pre",
+      "createdAt": "2026-07-10T00:00:00.000Z"
+    }
+  ],
+  "checkpoints": [
+    {
+      "checkpointId": "dev_checkpoint_example_001_001",
+      "schemaVersion": "1.0.0",
+      "runRef": "dev_run_example_001",
+      "sequence": 1,
+      "state": "blocked",
+      "artifactRefs": ["governance_drift_example_pre"],
+      "governanceResultRefs": ["governance_drift_example_pre"],
+      "durablyPersisted": false,
+      "resumable": false,
+      "createdAt": "2026-07-10T00:00:00.000Z"
+    }
+  ],
+  "governanceChecks": [
+    {
+      "governanceDriftResultId": "governance_drift_example_pre",
+      "schemaVersion": "1.0.0",
+      "authoritySnapshotRef": "authority_snapshot_example_001",
+      "missionLockRef": "mission_lock_example_001",
+      "repositoryRoot": "C:/repositories/KAVEEP-DEV-AGENT",
+      "checkedDocuments": [],
+      "findings": [{ "code": "authority_document_missing", "severity": "critical", "message": "Authority document is missing.", "path": "ENGINEERING-CONSTITUTION.md" }],
+      "protectedProposalFindings": [],
+      "limitations": ["The result grants no authority."],
+      "evidenceRefs": ["evidence_authority_example_001"],
+      "status": "blocked",
+      "decision": "block_governance_drift",
+      "recommendedNextAction": "restore_or_review_authority",
+      "checkedAt": "2026-07-10T00:00:00.000Z"
+    }
+  ],
+  "artifacts": {},
+  "errors": [],
+  "limitations": ["No execution authority is created."],
+  "status": "blocked",
+  "recommendedNextAction": "request_governance_process",
+  "startedAt": "2026-07-10T00:00:00.000Z",
+  "updatedAt": "2026-07-10T00:00:00.000Z"
+}
+

@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kaveep.dev/dev-agent/schemas/dev-orchestration-run.schema.json",
+  "title": "KAVEEP DEV-AGENT Read-Only Orchestration Run",
+  "description": "DEV-AGENT-owned engineering coordination record, not a Command Center mission or workflow.",
+  "type": "object",
+  "required": ["runId", "schemaVersion", "command", "repositoryRoot", "authoritySnapshotRef", "missionLockRef", "state", "terminal", "transitions", "checkpoints", "governanceChecks", "artifacts", "errors", "limitations", "status", "recommendedNextAction", "startedAt", "updatedAt"],
+  "properties": {
+    "runId": { "type": "string", "pattern": "^dev_run_[A-Za-z0-9][A-Za-z0-9_-]*$" },
+    "schemaVersion": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "command": { "type": "string" },
+    "repositoryRoot": { "type": "string", "minLength": 1 },
+    "authoritySnapshotRef": { "type": "string", "pattern": "^authority_snapshot_[A-Za-z0-9][A-Za-z0-9_-]*$" },
+    "missionLockRef": { "type": "string", "pattern": "^mission_lock_[A-Za-z0-9][A-Za-z0-9_-]*$" },
+    "state": { "$ref": "#/$defs/state" },
+    "terminal": { "type": "boolean" },
+    "transitions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["sequence", "fromState", "toState", "stage", "outcome", "reason", "createdAt"],
+        "properties": {
+          "sequence": { "type": "integer", "minimum": 1 },
+          "fromState": { "$ref": "#/$defs/state" },
+          "toState": { "$ref": "#/$defs/state" },
+          "stage": { "type": "string", "enum": ["governance_precheck", "interpret", "repository_inspection", "context_build", "planning", "governance_postcheck", "completion", "failure"] },
+          "outcome": { "type": "string", "enum": ["completed", "blocked", "no_action", "failed", "unverified"] },
+          "reason": { "type": "string", "minLength": 1 },
+          "artifactRef": { "type": "string", "minLength": 1 },
+          "createdAt": { "type": "string", "format": "date-time" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "checkpoints": { "type": "array", "items": { "$ref": "dev-orchestration-checkpoint.schema.json" } },
+    "governanceChecks": { "type": "array", "items": { "$ref": "governance-drift-result.schema.json" } },
+    "artifacts": {
+      "type": "object",
+      "properties": {
+        "engineeringRequest": { "$ref": "engineering-request.schema.json" },
+        "repositoryIntelligence": { "$ref": "repository-intelligence.schema.json" },
+        "engineeringContext": { "$ref": "engineering-context.schema.json" },
+        "engineeringPlan": { "$ref": "engineering-plan.schema.json" }
+      },
+      "additionalProperties": false
+    },
+    "errors": { "type": "array", "items": { "$ref": "#/$defs/message" } },
+    "limitations": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "status": { "type": "string", "enum": ["completed", "completed_with_warnings", "blocked", "no_action", "failed", "unverified"] },
+    "recommendedNextAction": { "type": "string", "enum": ["submit_plan_for_governed_review", "request_governance_process", "gather_more_evidence", "ask_clarifying_question", "no_action", "investigate_failure"] },
+    "startedAt": { "type": "string", "format": "date-time" },
+    "updatedAt": { "type": "string", "format": "date-time" }
+  },
+  "$defs": {
+    "state": { "type": "string", "enum": ["received", "governance_prechecked", "interpreted", "repository_inspected", "context_built", "planned", "governance_postchecked", "completed", "blocked", "no_action", "failed"] },
+    "message": {
+      "type": "object",
+      "required": ["code", "message", "stage"],
+      "properties": { "code": { "type": "string", "minLength": 1 }, "message": { "type": "string", "minLength": 1 }, "stage": { "type": "string", "minLength": 1 } },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
+

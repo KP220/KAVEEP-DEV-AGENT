@@ -1,0 +1,1 @@
+{"validationRequestId":"static_validation_request_example_001","schemaVersion":"1.0.0","sandboxId":"sandbox_example_001","manifestRef":"C:/temp/kaveep-sandbox-example/sandbox-manifest.json","operation":"node_syntax_check","files":["src/index.mjs"],"limits":{"maxFiles":25,"timeoutMsPerFile":5000,"maxOutputBytes":65536},"status":"proposed","createdAt":"2026-07-10T00:00:00.000Z"}

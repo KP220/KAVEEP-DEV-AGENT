@@ -1,0 +1,56 @@
+name: Quality Gates
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-and-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Create external contract fixtures
+        run: |
+          node --input-type=module <<'EOF'
+          import { mkdir, writeFile } from "node:fs/promises";
+          import path from "node:path";
+
+          const schema = {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "additionalProperties": true
+          };
+          const files = {
+            "../KAVEEP-CORE/schemas/agent-ref.schema.json": schema,
+            "../KAVEEP-CORE/schemas/audit-ref.schema.json": schema,
+            "../KAVEEP-CORE/schemas/capability-ref.schema.json": schema,
+            "../KAVEEP-CORE/schemas/evidence-ref.schema.json": schema,
+            "../KAVEEP-CORE/schemas/policy-ref.schema.json": schema,
+            "../KAVEEP-CORE/schemas/report-envelope.schema.json": schema,
+            "../KAVEEP-CORE/schemas/task-ref.schema.json": schema,
+            "../KAVEEP-POLICY/schemas/approval-request.schema.json": schema,
+            "../KAVEEP-POLICY/schemas/policy-report.schema.json": schema,
+            "../KAVEEP-POLICY/schemas/risk-assessment.schema.json": schema,
+            "../KAVEEP-RO/schemas/common-report.schema.json": schema,
+            "../KAVEEP-SIA/schemas/storage-report.schema.json": schema,
+            "../KAVEEP-COMMAND-CENTER/schemas/command-center-report.schema.json": schema
+          };
+          for (const [file, value] of Object.entries(files)) {
+            await mkdir(path.dirname(file), { recursive: true });
+            await writeFile(file, `${JSON.stringify(value, null, 2)}\n`);
+          }
+          EOF
+
+      - name: Run contract validation and tests
+        run: npm test

@@ -1,0 +1,13 @@
+{
+  "checkpointId": "dev_checkpoint_example_001_001",
+  "schemaVersion": "1.0.0",
+  "runRef": "dev_run_example_001",
+  "sequence": 1,
+  "state": "governance_prechecked",
+  "artifactRefs": ["governance_drift_example_pre"],
+  "governanceResultRefs": ["governance_drift_example_pre"],
+  "durablyPersisted": false,
+  "resumable": false,
+  "createdAt": "2026-07-10T00:00:00.000Z"
+}
+
