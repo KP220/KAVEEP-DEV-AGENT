@@ -30,6 +30,7 @@ const gates = [
   ["Persistent Workspace Index", "tools/test-workspace-index.mjs"],
   ["Local Review Workflow", "tools/test-local-review-workflow.mjs"],
   ["Controlled Local Git", "tools/test-controlled-git-workflow.mjs"],
+  ["Git Operation Classifier", "tools/test-git-operation-classifier.mjs"],
   ["Local Config and Doctor", "tools/test-local-config-doctor.mjs"],
   ["Standalone App Surface", "tools/test-standalone-app.mjs"],
   ["Production Soak", "tools/test-production-soak.mjs"],
@@ -45,10 +46,21 @@ function run(script) {
       stdio: "inherit",
       windowsHide: true
     });
+
     child.once("error", reject);
+
     child.once("exit", (code, signal) => {
-      if (code === 0) return resolve();
-      reject(new Error(`${script} failed${signal ? ` with signal ${signal}` : ` with exit code ${code}`}.`));
+      if (code === 0) {
+        return resolve();
+      }
+
+      reject(
+        new Error(
+          `${script} failed${
+            signal ? ` with signal ${signal}` : ` with exit code ${code}`
+          }.`
+        )
+      );
     });
   });
 }
