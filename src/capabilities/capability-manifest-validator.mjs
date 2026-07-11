@@ -162,28 +162,6 @@ function isRepositoryRelativePath(value) {
   );
 }
 
-function resolveInsideRepository(repoRoot, repositoryPath) {
-  if (!isRepositoryRelativePath(repositoryPath)) {
-    throw new Error(`Unsafe repository-relative path: ${repositoryPath}`);
-  }
-
-  const absoluteRoot = path.resolve(repoRoot);
-  const absolutePath = path.resolve(absoluteRoot, repositoryPath);
-  const relative = path.relative(absoluteRoot, absolutePath);
-
-  if (
-    relative === "" ||
-    relative.startsWith(`..${path.sep}`) ||
-    relative === ".." ||
-    path.isAbsolute(relative)
-  ) {
-    throw new Error(`Path escapes repository root: ${repositoryPath}`);
-  }
-
-  return absolutePath;
-}
-
-function assertLexicalRepositoryContainment(
   repoRoot,
   repositoryPath
 ) {
