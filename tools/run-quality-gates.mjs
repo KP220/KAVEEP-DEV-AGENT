@@ -118,6 +118,10 @@ const gates = [
   [
     "Controlled Process Runner",
     "tools/test-controlled-process-runner.mjs"
+  ],
+  [
+    "Capability Manifest",
+    "tools/test-capability-manifest.mjs"
   ]
 ];
 
