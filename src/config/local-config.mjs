@@ -377,3 +377,131 @@ export async function loadLocalConfig(configPath) {
   )) {
     if (
       path.resolve(config.roots[name] ?? "") !==
+      path.resolve(expectedPath)
+    ) {
+      throw new Error(
+        `Configured root does not match data root: ${name}.`
+      );
+    }
+  }
+
+  return {
+    ...config,
+    repositoryRoot: repository,
+    dataRoot: data,
+    roots: expectedRoots,
+    provider,
+    execution,
+    defaults
+  };
+}
+
+export class EnvironmentSecretProvider {
+  #environment;
+
+  constructor(environment = process.env) {
+    this.#environment = environment;
+    Object.freeze(this);
+  }
+
+  status(reference) {
+    const value = this.#environment[reference];
+
+    return {
+      provider: "environment",
+      reference,
+      available:
+        typeof value === "string" &&
+        value.length > 0,
+      value: "[REDACTED]"
+    };
+  }
+
+  resolve(reference) {
+    const value = this.#environment[reference];
+
+    if (!value) {
+      throw new Error(
+        `Required environment secret is unavailable: ${reference}`
+      );
+    }
+
+    return new SecretValue(value);
+  }
+
+  toJSON() {
+    return {
+      provider: "environment",
+      value: "[REDACTED]"
+    };
+  }
+}
+
+export class SecretValue {
+  #value;
+
+  constructor(value) {
+    this.#value = value;
+    Object.freeze(this);
+  }
+
+  reveal() {
+    return this.#value;
+  }
+
+  toJSON() {
+    return "[REDACTED]";
+  }
+
+  toString() {
+    return "[REDACTED]";
+  }
+}
+
+export async function configureSecretReference(
+  configPath,
+  provider,
+  reference
+) {
+  if (!SUPPORTED_SECRET_PROVIDERS.has(provider)) {
+    throw new Error(
+      `Unsupported secret provider: ${provider}.`
+    );
+  }
+
+  const explicitReference = requireNonEmptyString(
+    reference,
+    "Secret reference"
+  );
+
+  const config = await loadLocalConfig(configPath);
+
+  config.provider.secretProvider = provider;
+  config.provider.secretReference =
+    provider === "windows-dpapi"
+      ? path.resolve(explicitReference)
+      : explicitReference;
+
+  validateProvider(config.provider);
+  rejectSecrets(config);
+
+  await atomic(path.resolve(configPath), config);
+
+  return config;
+}
+
+export const LOCAL_CONFIG_CAPABILITIES = Object.freeze({
+  configVersion: CURRENT_CONFIG_VERSION,
+  implementedProviders: Object.freeze(["openai"]),
+  plannedZeroCostLocalProviders: Object.freeze([
+    "ollama",
+    "openai-compatible-local"
+  ]),
+  supportedSecretProviders: Object.freeze([
+    "environment",
+    "windows-dpapi"
+  ]),
+  offlineCapable: false,
+  networkRequired: true,
+  zeroBudgetCoreMode: "PLANNED"
+});
