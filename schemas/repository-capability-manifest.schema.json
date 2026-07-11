@@ -48,23 +48,16 @@
       "maxItems": 100
     },
     "highestSpecifiedMilestone": {
-      "$ref": "#/$defs/milestoneClaim"
+      "$ref": "#/$defs/milestoneOrUnverified"
     },
     "highestImplementedMilestone": {
-      "$ref": "#/$defs/milestoneClaim"
+      "$ref": "#/$defs/milestoneOrUnverified"
     },
     "highestSelfTestedMilestone": {
-      "$ref": "#/$defs/milestoneClaim"
+      "$ref": "#/$defs/milestoneOrUnverified"
     },
     "highestLiveCertifiedMilestone": {
-      "oneOf": [
-        {
-          "$ref": "#/$defs/milestoneClaim"
-        },
-        {
-          "const": "UNVERIFIED"
-        }
-      ]
+      "$ref": "#/$defs/milestoneOrUnverified"
     },
     "overallStatus": {
       "type": "string",
@@ -122,23 +115,53 @@
     },
     {
       "if": {
-        "properties": {
-          "highestLiveCertifiedMilestone": {
-            "const": "UNVERIFIED"
+        "anyOf": [
+          {
+            "properties": {
+              "highestSpecifiedMilestone": {
+                "const": "UNVERIFIED"
+              }
+            },
+            "required": [
+              "highestSpecifiedMilestone"
+            ]
+          },
+          {
+            "properties": {
+              "highestImplementedMilestone": {
+                "const": "UNVERIFIED"
+              }
+            },
+            "required": [
+              "highestImplementedMilestone"
+            ]
+          },
+          {
+            "properties": {
+              "highestSelfTestedMilestone": {
+                "const": "UNVERIFIED"
+              }
+            },
+            "required": [
+              "highestSelfTestedMilestone"
+            ]
+          },
+          {
+            "properties": {
+              "highestLiveCertifiedMilestone": {
+                "const": "UNVERIFIED"
+              }
+            },
+            "required": [
+              "highestLiveCertifiedMilestone"
+            ]
           }
-        },
-        "required": [
-          "highestLiveCertifiedMilestone"
         ]
       },
       "then": {
         "properties": {
           "limitations": {
-            "contains": {
-              "type": "string",
-              "pattern": "live|Live|LIVE|certif|Certif|CERTIF|runtime|Runtime|RUNTIME|unverified|Unverified|UNVERIFIED"
-            },
-            "minContains": 1
+            "minItems": 1
           }
         }
       }
@@ -160,6 +183,16 @@
     "milestoneClaim": {
       "type": "string",
       "pattern": "^SPEC-[0-9]{3}$"
+    },
+    "milestoneOrUnverified": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/milestoneClaim"
+        },
+        {
+          "const": "UNVERIFIED"
+        }
+      ]
     }
   },
   "additionalProperties": false
