@@ -1,5 +1,13 @@
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
+import {
+  mkdir,
+  mkdtemp,
+  readFile,
+  rm,
+  symlink,
+  writeFile
+} from "node:fs/promises";
+import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { validateCapabilityManifest } from "../src/capabilities/capability-manifest-validator.mjs";
@@ -21,6 +29,66 @@ const canonicalManifest = JSON.parse(
 
 function clone(value) {
   return structuredClone(value);
+}
+
+async function createMinimalRepositoryFixture(root) {
+  const authorityPaths = [
+    "ENGINEERING-CONSTITUTION.md",
+    "ENGINEERING-CHARTER.md",
+    "ENGINEERING-PHILOSOPHY.md",
+    "ARCHITECTURE.md",
+    "ENGINEERING-LIFECYCLE.md",
+    "ENGINEERING-WORKFLOW.md",
+    "REPOSITORY-STANDARD.md"
+  ];
+
+  await mkdir(path.join(root, "specs"), {
+    recursive: true
+  });
+
+  await mkdir(path.join(root, "tools"), {
+    recursive: true
+  });
+
+  await writeFile(
+    path.join(root, "package.json"),
+    `${JSON.stringify(
+      {
+        name: "@kaveep/dev-agent-test-fixture",
+        version: canonicalManifest.packageVersion,
+        private: true,
+        type: "module"
+      },
+      null,
+      2
+    )}\n`,
+    "utf8"
+  );
+
+  for (const authorityPath of authorityPaths) {
+    const content =
+      authorityPath === "ARCHITECTURE.md"
+        ? `# Test Architecture\n\nVersion\n\n${canonicalManifest.architectureVersion}\n`
+        : `# ${authorityPath}\n`;
+
+    await writeFile(
+      path.join(root, authorityPath),
+      content,
+      "utf8"
+    );
+  }
+
+  await writeFile(
+    path.join(root, "specs", "SPEC-038.md"),
+    "# SPEC-038 test fixture\n",
+    "utf8"
+  );
+
+  await writeFile(
+    path.join(root, "tools", "run-quality-gates.mjs"),
+    "export {};\n",
+    "utf8"
+  );
 }
 
 function hasError(result, code) {
@@ -240,6 +308,85 @@ await runTest(
       ),
       false
     );
+  }
+);
+
+await runTest(
+  "parent-directory symlink escape is rejected",
+  async () => {
+    const fixtureRoot = await mkdtemp(
+      path.join(os.tmpdir(), "kaveep-capability-root-")
+    );
+
+    const outsideRoot = await mkdtemp(
+      path.join(os.tmpdir(), "kaveep-capability-outside-")
+    );
+
+    try {
+      await createMinimalRepositoryFixture(fixtureRoot);
+
+      await writeFile(
+        path.join(outsideRoot, "evidence.json"),
+        "{}\n",
+        "utf8"
+      );
+
+      const linkedDirectory = path.join(
+        fixtureRoot,
+        "linked-evidence"
+      );
+
+      await symlink(
+        outsideRoot,
+        linkedDirectory,
+        process.platform === "win32" ? "junction" : "dir"
+      );
+
+      const manifest = clone(canonicalManifest);
+      const capability = manifest.capabilities[0];
+
+      capability.evidence[0].path =
+        "linked-evidence/evidence.json";
+
+      const result = await validateCapabilityManifest({
+        repoRoot: fixtureRoot,
+        manifest
+      });
+
+      assert.equal(result.status, "DRIFT_DETECTED");
+      assert.equal(result.blocking, true);
+
+      assert.equal(
+        result.drift.some(
+          (finding) =>
+            finding.code === "DRIFT_EVIDENCE_PATH" &&
+            finding.observed === "resolved_path_escape"
+        ),
+        true
+      );
+
+      assert.equal(
+        result.evidenceInspected.some(
+          (entry) =>
+            entry.evidenceId ===
+              capability.evidence[0].evidenceId &&
+            entry.path ===
+              "linked-evidence/evidence.json" &&
+            entry.status === "MISMATCHED"
+        ),
+        true
+      );
+    } finally {
+      await rm(fixtureRoot, {
+        recursive: true,
+        force: true
+      });
+
+      await rm(outsideRoot, {
+        recursive: true,
+        force: true
+      });
+    }
   }
 );
 
