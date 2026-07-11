@@ -1,0 +1,446 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kaveep.dev/dev-agent/schemas/capability-manifest-validation-result.schema.json",
+  "title": "KAVEEP DEV-AGENT Capability Manifest Validation Result",
+  "description": "Deterministic read-only validation result for the repository capability manifest. This result reports evidence and drift but grants no execution, write, Git, network, release, approval, policy, governance, or certification authority.",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "status",
+    "repository",
+    "manifestPath",
+    "errors",
+    "drift",
+    "limitations",
+    "evidenceInspected",
+    "capabilitiesInspected",
+    "blocking"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "1.0.0"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "VALID",
+        "INVALID",
+        "DRIFT_DETECTED",
+        "UNVERIFIED"
+      ]
+    },
+    "repository": {
+      "const": "KAVEEP-DEV-AGENT"
+    },
+    "manifestPath": {
+      "const": "capabilities/repository-capability-manifest.json"
+    },
+    "errors": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/errorFinding"
+      },
+      "maxItems": 1000
+    },
+    "drift": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/driftFinding"
+      },
+      "maxItems": 1000
+    },
+    "limitations": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/limitation"
+      },
+      "uniqueItems": true,
+      "maxItems": 500
+    },
+    "evidenceInspected": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/inspectedEvidence"
+      },
+      "uniqueItems": true,
+      "maxItems": 5000
+    },
+    "capabilitiesInspected": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/inspectedCapability"
+      },
+      "uniqueItems": true,
+      "maxItems": 2000
+    },
+    "blocking": {
+      "type": "boolean"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "VALID"
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "then": {
+        "properties": {
+          "errors": {
+            "maxItems": 0
+          },
+          "drift": {
+            "maxItems": 0
+          },
+          "blocking": {
+            "const": false
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "INVALID"
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "then": {
+        "properties": {
+          "errors": {
+            "minItems": 1
+          },
+          "blocking": {
+            "const": true
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "DRIFT_DETECTED"
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "then": {
+        "properties": {
+          "drift": {
+            "minItems": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "UNVERIFIED"
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "then": {
+        "properties": {
+          "limitations": {
+            "minItems": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "blocking": {
+            "const": true
+          }
+        },
+        "required": [
+          "blocking"
+        ]
+      },
+      "then": {
+        "anyOf": [
+          {
+            "properties": {
+              "errors": {
+                "minItems": 1
+              }
+            }
+          },
+          {
+            "properties": {
+              "drift": {
+                "contains": {
+                  "properties": {
+                    "blocking": {
+                      "const": true
+                    }
+                  },
+                  "required": [
+                    "blocking"
+                  ]
+                },
+                "minContains": 1
+              }
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "$defs": {
+    "repositoryRelativePath": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 500,
+      "pattern": "^(?!/)(?![A-Za-z]:[\\\\/])(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*\\\\)(?!.*//)(?!\\./$)(?!.*(?:^|/)\\./)(?!.*[\\u0000-\\u001F\\u007F]).+$"
+    },
+    "errorFinding": {
+      "type": "object",
+      "required": [
+        "code",
+        "message",
+        "path",
+        "blocking"
+      ],
+      "properties": {
+        "code": {
+          "type": "string",
+          "pattern": "^ERR_[A-Z0-9_]+$",
+          "minLength": 5,
+          "maxLength": 120
+        },
+        "message": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "path": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/repositoryRelativePath"
+            },
+            {
+              "const": "$"
+            }
+          ]
+        },
+        "capabilityId": {
+          "type": ["string", "null"],
+          "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+        },
+        "blocking": {
+          "const": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "driftFinding": {
+      "type": "object",
+      "required": [
+        "code",
+        "classification",
+        "severity",
+        "message",
+        "path",
+        "blocking"
+      ],
+      "properties": {
+        "code": {
+          "type": "string",
+          "pattern": "^DRIFT_[A-Z0-9_]+$",
+          "minLength": 7,
+          "maxLength": 140
+        },
+        "classification": {
+          "type": "string",
+          "enum": [
+            "DOCUMENTATION_DRIFT",
+            "VERSION_DRIFT",
+            "SPECIFICATION_DRIFT",
+            "IMPLEMENTATION_DRIFT",
+            "TEST_DRIFT",
+            "QUALITY_GATE_DRIFT",
+            "CERTIFICATION_DRIFT",
+            "EVIDENCE_DRIFT",
+            "MANIFEST_DRIFT",
+            "AUTHORITY_DRIFT"
+          ]
+        },
+        "severity": {
+          "type": "string",
+          "enum": [
+            "LOW",
+            "MEDIUM",
+            "HIGH",
+            "CRITICAL"
+          ]
+        },
+        "message": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "path": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/repositoryRelativePath"
+            },
+            {
+              "const": "$"
+            }
+          ]
+        },
+        "capabilityId": {
+          "type": ["string", "null"],
+          "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+        },
+        "expected": {
+          "type": ["string", "number", "boolean", "null"]
+        },
+        "observed": {
+          "type": ["string", "number", "boolean", "null"]
+        },
+        "blocking": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "limitation": {
+      "type": "object",
+      "required": [
+        "code",
+        "message"
+      ],
+      "properties": {
+        "code": {
+          "type": "string",
+          "pattern": "^LIMIT_[A-Z0-9_]+$",
+          "minLength": 7,
+          "maxLength": 140
+        },
+        "message": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "path": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/repositoryRelativePath"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "capabilityId": {
+          "type": ["string", "null"],
+          "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "inspectedEvidence": {
+      "type": "object",
+      "required": [
+        "evidenceId",
+        "path",
+        "status"
+      ],
+      "properties": {
+        "evidenceId": {
+          "type": "string",
+          "pattern": "^evidence_[a-z0-9][a-z0-9_-]*$",
+          "minLength": 10,
+          "maxLength": 160
+        },
+        "path": {
+          "$ref": "#/$defs/repositoryRelativePath"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "PRESENT",
+            "MISSING",
+            "MISMATCHED",
+            "UNVERIFIED",
+            "EXPIRED",
+            "BLOCKED"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "inspectedCapability": {
+      "type": "object",
+      "required": [
+        "capabilityId",
+        "capabilityStatus",
+        "certificationStatus",
+        "valid"
+      ],
+      "properties": {
+        "capabilityId": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$",
+          "minLength": 2,
+          "maxLength": 120
+        },
+        "capabilityStatus": {
+          "type": "string",
+          "enum": [
+            "PROPOSED",
+            "SPECIFIED",
+            "IMPLEMENTED",
+            "SELF_TESTED",
+            "INTEGRATION_TESTED",
+            "LIVE_CERTIFIED",
+            "INDEPENDENTLY_REVIEWED",
+            "PRODUCTION_PROVEN",
+            "DEPRECATED",
+            "BLOCKED",
+            "UNVERIFIED"
+          ]
+        },
+        "certificationStatus": {
+          "type": "string",
+          "enum": [
+            "NOT_REQUIRED",
+            "UNVERIFIED",
+            "SELF_TESTED",
+            "INTEGRATION_TESTED",
+            "LIVE_CERTIFIED",
+            "INDEPENDENTLY_REVIEWED",
+            "PRODUCTION_PROVEN",
+            "FAILED",
+            "BLOCKED",
+            "EXPIRED"
+          ]
+        },
+        "valid": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
