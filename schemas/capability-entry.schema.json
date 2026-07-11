@@ -129,9 +129,7 @@
             "const": "PROPOSED"
           }
         },
-        "required": [
-          "capabilityStatus"
-        ]
+        "required": ["capabilityStatus"]
       },
       "then": {
         "properties": {
@@ -154,9 +152,7 @@
             "const": "SPECIFIED"
           }
         },
-        "required": [
-          "capabilityStatus"
-        ]
+        "required": ["capabilityStatus"]
       },
       "then": {
         "properties": {
@@ -168,6 +164,27 @@
           },
           "qualityGate": {
             "type": "null"
+          },
+          "evidence": {
+            "contains": {
+              "properties": {
+                "evidenceType": {
+                  "const": "SPECIFICATION"
+                },
+                "claim": {
+                  "const": "SPECIFIED"
+                },
+                "status": {
+                  "const": "PRESENT"
+                }
+              },
+              "required": [
+                "evidenceType",
+                "claim",
+                "status"
+              ]
+            },
+            "minContains": 1
           }
         }
       }
@@ -186,9 +203,7 @@
             ]
           }
         },
-        "required": [
-          "capabilityStatus"
-        ]
+        "required": ["capabilityStatus"]
       },
       "then": {
         "properties": {
@@ -197,6 +212,41 @@
           },
           "evidence": {
             "minItems": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "capabilityStatus": {
+            "const": "IMPLEMENTED"
+          }
+        },
+        "required": ["capabilityStatus"]
+      },
+      "then": {
+        "properties": {
+          "evidence": {
+            "contains": {
+              "properties": {
+                "evidenceType": {
+                  "const": "IMPLEMENTATION"
+                },
+                "claim": {
+                  "const": "IMPLEMENTED"
+                },
+                "status": {
+                  "const": "PRESENT"
+                }
+              },
+              "required": [
+                "evidenceType",
+                "claim",
+                "status"
+              ]
+            },
+            "minContains": 1
           }
         }
       }
@@ -214,17 +264,82 @@
             ]
           }
         },
-        "required": [
-          "capabilityStatus"
-        ]
+        "required": ["capabilityStatus"]
       },
       "then": {
         "properties": {
           "testPaths": {
             "minItems": 1
-          },
-          "qualityGate": {
-            "$ref": "#/$defs/qualityGate"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "capabilityStatus": {
+            "const": "SELF_TESTED"
+          }
+        },
+        "required": ["capabilityStatus"]
+      },
+      "then": {
+        "properties": {
+          "evidence": {
+            "contains": {
+              "properties": {
+                "evidenceType": {
+                  "const": "TEST"
+                },
+                "claim": {
+                  "const": "SELF_TESTED"
+                },
+                "status": {
+                  "const": "PASSED"
+                }
+              },
+              "required": [
+                "evidenceType",
+                "claim",
+                "status"
+              ]
+            },
+            "minContains": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "capabilityStatus": {
+            "const": "INTEGRATION_TESTED"
+          }
+        },
+        "required": ["capabilityStatus"]
+      },
+      "then": {
+        "properties": {
+          "evidence": {
+            "contains": {
+              "properties": {
+                "evidenceType": {
+                  "const": "INTEGRATION_RESULT"
+                },
+                "claim": {
+                  "const": "INTEGRATION_TESTED"
+                },
+                "status": {
+                  "const": "PASSED"
+                }
+              },
+              "required": [
+                "evidenceType",
+                "claim",
+                "status"
+              ]
+            },
+            "minContains": 1
           }
         }
       }
@@ -236,9 +351,7 @@
             "const": "LIVE_CERTIFIED"
           }
         },
-        "required": [
-          "capabilityStatus"
-        ]
+        "required": ["capabilityStatus"]
       },
       "then": {
         "properties": {
@@ -276,9 +389,7 @@
             "const": "INDEPENDENTLY_REVIEWED"
           }
         },
-        "required": [
-          "capabilityStatus"
-        ]
+        "required": ["capabilityStatus"]
       },
       "then": {
         "properties": {
@@ -316,15 +427,188 @@
             "const": "PRODUCTION_PROVEN"
           }
         },
-        "required": [
-          "capabilityStatus"
-        ]
+        "required": ["capabilityStatus"]
       },
       "then": {
         "properties": {
           "certificationStatus": {
             "const": "PRODUCTION_PROVEN"
           },
+          "evidence": {
+            "contains": {
+              "properties": {
+                "evidenceType": {
+                  "const": "PRODUCTION_RECORD"
+                },
+                "claim": {
+                  "const": "PRODUCTION_PROVEN"
+                },
+                "status": {
+                  "const": "PASSED"
+                }
+              },
+              "required": [
+                "evidenceType",
+                "claim",
+                "status"
+              ]
+            },
+            "minContains": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "certificationStatus": {
+            "const": "SELF_TESTED"
+          }
+        },
+        "required": ["certificationStatus"]
+      },
+      "then": {
+        "properties": {
+          "evidence": {
+            "contains": {
+              "properties": {
+                "evidenceType": {
+                  "const": "TEST"
+                },
+                "claim": {
+                  "const": "SELF_TESTED"
+                },
+                "status": {
+                  "const": "PASSED"
+                }
+              },
+              "required": [
+                "evidenceType",
+                "claim",
+                "status"
+              ]
+            },
+            "minContains": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "certificationStatus": {
+            "const": "INTEGRATION_TESTED"
+          }
+        },
+        "required": ["certificationStatus"]
+      },
+      "then": {
+        "properties": {
+          "evidence": {
+            "contains": {
+              "properties": {
+                "evidenceType": {
+                  "const": "INTEGRATION_RESULT"
+                },
+                "claim": {
+                  "const": "INTEGRATION_TESTED"
+                },
+                "status": {
+                  "const": "PASSED"
+                }
+              },
+              "required": [
+                "evidenceType",
+                "claim",
+                "status"
+              ]
+            },
+            "minContains": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "certificationStatus": {
+            "const": "LIVE_CERTIFIED"
+          }
+        },
+        "required": ["certificationStatus"]
+      },
+      "then": {
+        "properties": {
+          "evidence": {
+            "contains": {
+              "properties": {
+                "evidenceType": {
+                  "const": "LIVE_CERTIFICATION"
+                },
+                "claim": {
+                  "const": "LIVE_CERTIFIED"
+                },
+                "status": {
+                  "const": "PASSED"
+                }
+              },
+              "required": [
+                "evidenceType",
+                "claim",
+                "status"
+              ]
+            },
+            "minContains": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "certificationStatus": {
+            "const": "INDEPENDENTLY_REVIEWED"
+          }
+        },
+        "required": ["certificationStatus"]
+      },
+      "then": {
+        "properties": {
+          "evidence": {
+            "contains": {
+              "properties": {
+                "evidenceType": {
+                  "const": "INDEPENDENT_REVIEW"
+                },
+                "claim": {
+                  "const": "INDEPENDENTLY_REVIEWED"
+                },
+                "status": {
+                  "const": "PASSED"
+                }
+              },
+              "required": [
+                "evidenceType",
+                "claim",
+                "status"
+              ]
+            },
+            "minContains": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "certificationStatus": {
+            "const": "PRODUCTION_PROVEN"
+          }
+        },
+        "required": ["certificationStatus"]
+      },
+      "then": {
+        "properties": {
           "evidence": {
             "contains": {
               "properties": {
@@ -361,9 +645,7 @@
             ]
           }
         },
-        "required": [
-          "certificationStatus"
-        ]
+        "required": ["certificationStatus"]
       },
       "then": {
         "properties": {
@@ -383,9 +665,7 @@
             ]
           }
         },
-        "required": [
-          "capabilityStatus"
-        ]
+        "required": ["capabilityStatus"]
       },
       "then": {
         "properties": {
