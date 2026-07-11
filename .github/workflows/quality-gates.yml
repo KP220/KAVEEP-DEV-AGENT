@@ -11,9 +11,44 @@ jobs:
   validate-and-test:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: KAVEEP-DEV-AGENT
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+        with:
+          path: KAVEEP-DEV-AGENT
+
+      - name: Check out KAVEEP-CORE contracts
+        uses: actions/checkout@v4
+        with:
+          repository: KP220/KAVEEP-CORE
+          path: KAVEEP-CORE
+
+      - name: Check out KAVEEP-POLICY contracts
+        uses: actions/checkout@v4
+        with:
+          repository: KP220/KAVEEP-POLICY
+          path: KAVEEP-POLICY
+
+      - name: Check out KAVEEP-RO contracts
+        uses: actions/checkout@v4
+        with:
+          repository: KP220/KAVEEP-RO
+          path: KAVEEP-RO
+
+      - name: Check out KAVEEP-SIA contracts
+        uses: actions/checkout@v4
+        with:
+          repository: KP220/KAVEEP-SIA
+          path: KAVEEP-SIA
+
+      - name: Check out KAVEEP-COMMAND-CENTER contracts
+        uses: actions/checkout@v4
+        with:
+          repository: KP220/KAVEEP-COMMAND-CENTER
+          path: KAVEEP-COMMAND-CENTER
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
