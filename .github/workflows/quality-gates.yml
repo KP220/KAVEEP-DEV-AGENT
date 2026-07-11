@@ -17,14 +17,7 @@ jobs:
       - name: Check out KAVEEP-DEV-AGENT
         uses: actions/checkout@v4
 
-      - name: Set up Node.js 22
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
 
-      - name: Install locked dependencies
-        run: npm ci
 
       - name: Prepare TEST_ONLY external contract doubles
         shell: bash
