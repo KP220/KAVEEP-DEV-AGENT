@@ -162,6 +162,7 @@ function isRepositoryRelativePath(value) {
   );
 }
 
+  function assertLexicalRepositoryContainment(
   repoRoot,
   repositoryPath
 ) {
