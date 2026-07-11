@@ -1,0 +1,441 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kaveep.dev/dev-agent/schemas/capability-entry.schema.json",
+  "title": "KAVEEP DEV-AGENT Capability Entry",
+  "description": "Strict contract for one repository capability entry. The entry records claims and evidence but grants no execution, write, network, approval, policy, Git, release, or certification authority.",
+  "type": "object",
+  "required": [
+    "capabilityId",
+    "name",
+    "governingSpecification",
+    "implementationPaths",
+    "testPaths",
+    "qualityGate",
+    "capabilityStatus",
+    "certificationStatus",
+    "evidence",
+    "limitations",
+    "dependencies",
+    "lastReviewedVersion"
+  ],
+  "properties": {
+    "capabilityId": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$",
+      "minLength": 2,
+      "maxLength": 120
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "governingSpecification": {
+      "$ref": "#/$defs/specificationPath"
+    },
+    "implementationPaths": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/repositoryRelativePath"
+      },
+      "uniqueItems": true,
+      "maxItems": 200
+    },
+    "testPaths": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/repositoryRelativePath"
+      },
+      "uniqueItems": true,
+      "maxItems": 200
+    },
+    "qualityGate": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "#/$defs/qualityGate"
+        }
+      ]
+    },
+    "capabilityStatus": {
+      "type": "string",
+      "enum": [
+        "PROPOSED",
+        "SPECIFIED",
+        "IMPLEMENTED",
+        "SELF_TESTED",
+        "INTEGRATION_TESTED",
+        "LIVE_CERTIFIED",
+        "INDEPENDENTLY_REVIEWED",
+        "PRODUCTION_PROVEN",
+        "DEPRECATED",
+        "BLOCKED",
+        "UNVERIFIED"
+      ]
+    },
+    "certificationStatus": {
+      "type": "string",
+      "enum": [
+        "NOT_REQUIRED",
+        "UNVERIFIED",
+        "SELF_TESTED",
+        "INTEGRATION_TESTED",
+        "LIVE_CERTIFIED",
+        "INDEPENDENTLY_REVIEWED",
+        "PRODUCTION_PROVEN",
+        "FAILED",
+        "BLOCKED",
+        "EXPIRED"
+      ]
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "$ref": "capability-status-evidence.schema.json"
+      },
+      "uniqueItems": true,
+      "maxItems": 500
+    },
+    "limitations": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 1000
+      },
+      "uniqueItems": true,
+      "maxItems": 100
+    },
+    "dependencies": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/capabilityId"
+      },
+      "uniqueItems": true,
+      "maxItems": 100
+    },
+    "lastReviewedVersion": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "capabilityStatus": {
+            "const": "PROPOSED"
+          }
+        },
+        "required": [
+          "capabilityStatus"
+        ]
+      },
+      "then": {
+        "properties": {
+          "implementationPaths": {
+            "maxItems": 0
+          },
+          "testPaths": {
+            "maxItems": 0
+          },
+          "qualityGate": {
+            "type": "null"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "capabilityStatus": {
+            "const": "SPECIFIED"
+          }
+        },
+        "required": [
+          "capabilityStatus"
+        ]
+      },
+      "then": {
+        "properties": {
+          "implementationPaths": {
+            "maxItems": 0
+          },
+          "testPaths": {
+            "maxItems": 0
+          },
+          "qualityGate": {
+            "type": "null"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "capabilityStatus": {
+            "enum": [
+              "IMPLEMENTED",
+              "SELF_TESTED",
+              "INTEGRATION_TESTED",
+              "LIVE_CERTIFIED",
+              "INDEPENDENTLY_REVIEWED",
+              "PRODUCTION_PROVEN"
+            ]
+          }
+        },
+        "required": [
+          "capabilityStatus"
+        ]
+      },
+      "then": {
+        "properties": {
+          "implementationPaths": {
+            "minItems": 1
+          },
+          "evidence": {
+            "minItems": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "capabilityStatus": {
+            "enum": [
+              "SELF_TESTED",
+              "INTEGRATION_TESTED",
+              "LIVE_CERTIFIED",
+              "INDEPENDENTLY_REVIEWED",
+              "PRODUCTION_PROVEN"
+            ]
+          }
+        },
+        "required": [
+          "capabilityStatus"
+        ]
+      },
+      "then": {
+        "properties": {
+          "testPaths": {
+            "minItems": 1
+          },
+          "qualityGate": {
+            "$ref": "#/$defs/qualityGate"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "capabilityStatus": {
+            "const": "LIVE_CERTIFIED"
+          }
+        },
+        "required": [
+          "capabilityStatus"
+        ]
+      },
+      "then": {
+        "properties": {
+          "certificationStatus": {
+            "const": "LIVE_CERTIFIED"
+          },
+          "evidence": {
+            "contains": {
+              "properties": {
+                "evidenceType": {
+                  "const": "LIVE_CERTIFICATION"
+                },
+                "claim": {
+                  "const": "LIVE_CERTIFIED"
+                },
+                "status": {
+                  "const": "PASSED"
+                }
+              },
+              "required": [
+                "evidenceType",
+                "claim",
+                "status"
+              ]
+            },
+            "minContains": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "capabilityStatus": {
+            "const": "INDEPENDENTLY_REVIEWED"
+          }
+        },
+        "required": [
+          "capabilityStatus"
+        ]
+      },
+      "then": {
+        "properties": {
+          "certificationStatus": {
+            "const": "INDEPENDENTLY_REVIEWED"
+          },
+          "evidence": {
+            "contains": {
+              "properties": {
+                "evidenceType": {
+                  "const": "INDEPENDENT_REVIEW"
+                },
+                "claim": {
+                  "const": "INDEPENDENTLY_REVIEWED"
+                },
+                "status": {
+                  "const": "PASSED"
+                }
+              },
+              "required": [
+                "evidenceType",
+                "claim",
+                "status"
+              ]
+            },
+            "minContains": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "capabilityStatus": {
+            "const": "PRODUCTION_PROVEN"
+          }
+        },
+        "required": [
+          "capabilityStatus"
+        ]
+      },
+      "then": {
+        "properties": {
+          "certificationStatus": {
+            "const": "PRODUCTION_PROVEN"
+          },
+          "evidence": {
+            "contains": {
+              "properties": {
+                "evidenceType": {
+                  "const": "PRODUCTION_RECORD"
+                },
+                "claim": {
+                  "const": "PRODUCTION_PROVEN"
+                },
+                "status": {
+                  "const": "PASSED"
+                }
+              },
+              "required": [
+                "evidenceType",
+                "claim",
+                "status"
+              ]
+            },
+            "minContains": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "certificationStatus": {
+            "enum": [
+              "FAILED",
+              "UNVERIFIED",
+              "BLOCKED",
+              "EXPIRED"
+            ]
+          }
+        },
+        "required": [
+          "certificationStatus"
+        ]
+      },
+      "then": {
+        "properties": {
+          "limitations": {
+            "minItems": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "capabilityStatus": {
+            "enum": [
+              "BLOCKED",
+              "UNVERIFIED"
+            ]
+          }
+        },
+        "required": [
+          "capabilityStatus"
+        ]
+      },
+      "then": {
+        "properties": {
+          "limitations": {
+            "minItems": 1
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "capabilityId": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$",
+      "minLength": 2,
+      "maxLength": 120
+    },
+    "repositoryRelativePath": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 500,
+      "pattern": "^(?!/)(?![A-Za-z]:[\\\\/])(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*\\\\)(?!.*//)(?!\\./$)(?!.*(?:^|/)\\./)(?!.*[\\u0000-\\u001F\\u007F]).+$"
+    },
+    "specificationPath": {
+      "type": "string",
+      "pattern": "^specs/SPEC-[0-9]{3}\\.md$",
+      "minLength": 17,
+      "maxLength": 21
+    },
+    "qualityGate": {
+      "type": "object",
+      "required": [
+        "name",
+        "testPath"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "testPath": {
+          "type": "string",
+          "pattern": "^tools/test-[a-z0-9][a-z0-9-]*\\.mjs$",
+          "minLength": 16,
+          "maxLength": 300
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
