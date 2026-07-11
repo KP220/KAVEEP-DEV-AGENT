@@ -1,0 +1,1 @@
+{"recoveryResultId":"write_recovery_example_001","schemaVersion":"1.0.0","transactionRef":"write_transaction_example_001","status":"recovered","recoveredPaths":["src/index.mjs"],"conflicts":[],"sourceVerified":true,"gitOperationPerformed":false,"startedAt":"2026-07-11T00:00:00.000Z","completedAt":"2026-07-11T00:00:01.000Z","recommendedNextAction":"validate_source_repository"}

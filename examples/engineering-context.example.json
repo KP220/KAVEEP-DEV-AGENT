@@ -1,0 +1,158 @@
+{
+  "contextId": "context_schema_request_001",
+  "schemaVersion": "1.0.0",
+  "requestRef": "request_schema_request_001",
+  "repositoryIntelligenceRef": "repo_intel_kaveep-dev-agent_001",
+  "repositoryRoot": "C:/work/KAVEEP-DEV-AGENT",
+  "relevantFiles": [
+    {
+      "path": "docs/ARCHITECTURE.md",
+      "relevanceReason": "Canonical contract or architecture documentation constrains schema ownership.",
+      "sourceField": "documentationArtifacts"
+    },
+    {
+      "path": "docs/MODULE-CONTRACTS.md",
+      "relevanceReason": "Canonical contract or architecture documentation constrains schema ownership.",
+      "sourceField": "documentationArtifacts"
+    },
+    {
+      "path": "examples/engineering-plan.example.json",
+      "relevanceReason": "Example artifact supports the requested contract work.",
+      "sourceField": "fileSummary.files"
+    },
+    {
+      "path": "schemas/engineering-plan.schema.json",
+      "relevanceReason": "Schema artifact is relevant to the request type.",
+      "sourceField": "schemaArtifacts"
+    },
+    {
+      "path": "specs/SPEC-003.md",
+      "relevanceReason": "Specification constrains the requested engineering work.",
+      "sourceField": "specificationArtifacts"
+    },
+    {
+      "path": "tools/validate-examples.mjs",
+      "relevanceReason": "Validation entry point is relevant to the request type.",
+      "sourceField": "validationEntryPoints"
+    }
+  ],
+  "relevantDirectories": [
+    {
+      "path": "docs",
+      "relevanceReason": "Contains at least one selected relevant artifact.",
+      "sourceField": "derivedFromRelevantFiles"
+    },
+    {
+      "path": "examples",
+      "relevanceReason": "Contains at least one selected relevant artifact.",
+      "sourceField": "derivedFromRelevantFiles"
+    },
+    {
+      "path": "schemas",
+      "relevanceReason": "Contains at least one selected relevant artifact.",
+      "sourceField": "derivedFromRelevantFiles"
+    },
+    {
+      "path": "specs",
+      "relevanceReason": "Contains at least one selected relevant artifact.",
+      "sourceField": "derivedFromRelevantFiles"
+    },
+    {
+      "path": "tools",
+      "relevanceReason": "Contains at least one selected relevant artifact.",
+      "sourceField": "derivedFromRelevantFiles"
+    }
+  ],
+  "relevantSchemas": [
+    {
+      "path": "schemas/engineering-plan.schema.json",
+      "relevanceReason": "Schema artifact is relevant to the request type.",
+      "sourceField": "schemaArtifacts"
+    }
+  ],
+  "relevantSpecifications": [
+    {
+      "path": "specs/SPEC-003.md",
+      "relevanceReason": "Specification constrains the requested engineering work.",
+      "sourceField": "specificationArtifacts"
+    }
+  ],
+  "relevantDocumentation": [
+    {
+      "path": "docs/ARCHITECTURE.md",
+      "relevanceReason": "Canonical contract or architecture documentation constrains schema ownership.",
+      "sourceField": "documentationArtifacts"
+    },
+    {
+      "path": "docs/MODULE-CONTRACTS.md",
+      "relevanceReason": "Canonical contract or architecture documentation constrains schema ownership.",
+      "sourceField": "documentationArtifacts"
+    }
+  ],
+  "relevantExamples": [
+    {
+      "path": "examples/engineering-plan.example.json",
+      "relevanceReason": "Example artifact supports the requested contract work.",
+      "sourceField": "fileSummary.files"
+    }
+  ],
+  "relevantValidationEntryPoints": [
+    {
+      "path": "tools/validate-examples.mjs",
+      "entryType": "package_script",
+      "description": "npm run validate:examples",
+      "relevanceReason": "Validation entry point is relevant to the request type.",
+      "executed": false
+    }
+  ],
+  "relevantTests": [],
+  "architectureContext": [
+    {
+      "signalType": "architecture_document",
+      "path": "docs/ARCHITECTURE.md",
+      "observation": "Architecture-related document detected by filename."
+    }
+  ],
+  "ownershipContext": [
+    {
+      "signalType": "ownership_document",
+      "path": "docs/MODULE-CONTRACTS.md",
+      "observation": "Ownership or authority signal detected by filename."
+    }
+  ],
+  "integrationContext": [],
+  "ignoredArtifacts": [
+    {
+      "path": ".git",
+      "reason": "Ignored by repository traversal policy."
+    }
+  ],
+  "assumptions": [
+    {
+      "statement": "Every selected path was present in supplied Repository Intelligence observations.",
+      "verificationStatus": "verified"
+    },
+    {
+      "statement": "Engineering Context is a deterministic selection and does not authorize execution.",
+      "verificationStatus": "verified"
+    }
+  ],
+  "missingContext": [],
+  "limitations": [
+    "Selection is deterministic and path-based; it does not infer semantic relevance.",
+    "Context Builder reads no files and uses only supplied Repository Intelligence observations.",
+    "Engineering Context does not replace KAVEEP-RO assessment or authorize engineering work."
+  ],
+  "warnings": [],
+  "evidenceRefs": [
+    {
+      "evidenceId": "evidence_context_selection_001",
+      "evidenceType": "repository_discovery",
+      "verificationStatus": "verified",
+      "sourceType": "report",
+      "createdAt": "1970-01-01T00:00:00.000Z",
+      "summary": "Repository Intelligence evidence used for deterministic context selection."
+    }
+  ],
+  "status": "completed"
+}

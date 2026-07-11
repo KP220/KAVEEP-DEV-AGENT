@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kaveep.dev/dev-agent/schemas/governance-drift-result.schema.json",
+  "title": "KAVEEP DEV-AGENT Governance Drift Result",
+  "description": "Deterministic comparison against an Authority Snapshot and Mission Lock. It grants no authority.",
+  "type": "object",
+  "required": ["governanceDriftResultId", "schemaVersion", "authoritySnapshotRef", "missionLockRef", "repositoryRoot", "checkedDocuments", "findings", "protectedProposalFindings", "limitations", "evidenceRefs", "status", "decision", "recommendedNextAction", "checkedAt"],
+  "properties": {
+    "governanceDriftResultId": { "type": "string", "pattern": "^governance_drift_[A-Za-z0-9][A-Za-z0-9_-]*$" },
+    "schemaVersion": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "authoritySnapshotRef": { "type": "string", "pattern": "^authority_snapshot_[A-Za-z0-9][A-Za-z0-9_-]*$" },
+    "missionLockRef": { "type": "string", "pattern": "^mission_lock_[A-Za-z0-9][A-Za-z0-9_-]*$" },
+    "repositoryRoot": { "type": "string", "minLength": 1 },
+    "checkedDocuments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["documentRef", "path", "expectedSha256", "observedSha256", "status"],
+        "properties": {
+          "documentRef": { "type": "string", "pattern": "^authority_document_[A-Za-z0-9][A-Za-z0-9_-]*$" },
+          "path": { "type": "string", "minLength": 1 },
+          "expectedSha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+          "observedSha256": { "type": ["string", "null"], "pattern": "^[a-f0-9]{64}$" },
+          "status": { "type": "string", "enum": ["aligned", "modified", "missing", "unverified"] }
+        },
+        "additionalProperties": false
+      }
+    },
+    "findings": { "type": "array", "items": { "$ref": "#/$defs/finding" } },
+    "protectedProposalFindings": { "type": "array", "items": { "$ref": "#/$defs/finding" } },
+    "limitations": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "evidenceRefs": { "type": "array", "items": { "type": "string", "pattern": "^evidence_[A-Za-z0-9][A-Za-z0-9_-]*$" } },
+    "status": { "type": "string", "enum": ["aligned", "blocked", "unverified"] },
+    "decision": { "type": "string", "enum": ["continue_read_only_pipeline", "block_governance_drift", "gather_more_evidence"] },
+    "recommendedNextAction": { "type": "string", "enum": ["continue_read_only_pipeline", "restore_or_review_authority", "request_governance_process", "gather_more_evidence"] },
+    "checkedAt": { "type": "string", "format": "date-time" }
+  },
+  "$defs": {
+    "finding": {
+      "type": "object",
+      "required": ["code", "severity", "message"],
+      "properties": {
+        "code": { "type": "string", "minLength": 1 },
+        "severity": { "type": "string", "enum": ["medium", "high", "critical"] },
+        "message": { "type": "string", "minLength": 1 },
+        "path": { "type": "string" },
+        "principleRef": { "type": "string", "pattern": "^principle_[A-Za-z0-9][A-Za-z0-9_-]*$" },
+        "changeCategory": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
+

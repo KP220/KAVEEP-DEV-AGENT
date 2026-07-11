@@ -1,0 +1,17 @@
+import { spawn } from "node:child_process";
+import { access, readFile } from "node:fs/promises";
+import path from "node:path";
+import { SecretValue } from "./local-config.mjs";
+
+const protectScript = "Add-Type -AssemblyName System.Security;$s=[Console]::In.ReadToEnd();$b=[Text.Encoding]::UTF8.GetBytes($s);$p=[System.Security.Cryptography.ProtectedData]::Protect($b,$null,[System.Security.Cryptography.DataProtectionScope]::CurrentUser);[Console]::Out.Write([Convert]::ToBase64String($p))";
+const unprotectScript = "Add-Type -AssemblyName System.Security;$s=[Console]::In.ReadToEnd();$b=[Convert]::FromBase64String($s);$p=[System.Security.Cryptography.ProtectedData]::Unprotect($b,$null,[System.Security.Cryptography.DataProtectionScope]::CurrentUser);[Console]::Out.Write([Text.Encoding]::UTF8.GetString($p))";
+function powershell() { return path.join(process.env.SystemRoot ?? "C:\\Windows", "System32", "WindowsPowerShell", "v1.0", "powershell.exe"); }
+function run(script, input, options = {}) { return new Promise((resolve) => { const child = spawn(options.executable ?? powershell(), ["-NoLogo", "-NoProfile", "-NonInteractive", "-Command", script], { env: { SystemRoot: process.env.SystemRoot, WINDIR: process.env.WINDIR }, shell: false, windowsHide: true, stdio: ["pipe", "pipe", "pipe"] }); let stdout = "", stderr = ""; child.stdout.on("data", (chunk) => stdout += chunk); child.stderr.on("data", (chunk) => stderr += chunk); child.once("error", (error) => resolve({ code: null, stdout: "", stderr: error.message })); child.once("exit", (code) => resolve({ code, stdout, stderr })); child.stdin.end(input); }); }
+async function invoke(kind, input, options) { if (process.platform !== "win32" && !options.processAdapter) throw new Error("Windows DPAPI is unavailable on this platform."); const script = kind === "protect" ? protectScript : unprotectScript; const result = options.processAdapter ? await options.processAdapter.run({ kind, script, input }) : await run(script, input, options); if (result.code !== 0 || !result.stdout) { const safe = String(result.stderr ?? "").replaceAll(String(input), "[REDACTED]").slice(0, 1000).trim(); throw new Error(`Windows DPAPI ${kind} failed without exposing secret material.${safe ? ` ${safe}` : ""}`); } return result.stdout.trim(); }
+export class WindowsDpapiSecretProvider {
+  constructor(options = {}) { this.options = options; Object.freeze(this); }
+  async protect(secretValue) { const plaintext = secretValue instanceof SecretValue ? secretValue.reveal() : String(secretValue); if (!plaintext) throw new Error("Cannot protect an empty secret."); return invoke("protect", plaintext, this.options); }
+  async status(reference) { try { if (process.platform !== "win32" && !this.options.processAdapter) return { provider: "windows-dpapi", reference, available: false, value: "[REDACTED]", reason: "unsupported_platform" }; await access(path.resolve(reference)); return { provider: "windows-dpapi", reference, available: true, value: "[REDACTED]" }; } catch { return { provider: "windows-dpapi", reference, available: false, value: "[REDACTED]", reason: "ciphertext_unavailable" }; } }
+  async resolve(reference) { const ciphertext = (await readFile(path.resolve(reference), "utf8")).trim(); if (!ciphertext || !/^[A-Za-z0-9+/=]+$/.test(ciphertext)) throw new Error("DPAPI ciphertext file is invalid."); return new SecretValue(await invoke("unprotect", ciphertext, this.options)); }
+  toJSON() { return { provider: "windows-dpapi", value: "[REDACTED]" }; }
+}

@@ -1,0 +1,292 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kaveep.dev/dev-agent/schemas/dev-agent-report.schema.json",
+  "title": "KAVEEP DEV-AGENT Report",
+  "description": "DEV-AGENT-owned engineering report that composes the KAVEEP-CORE report envelope and stores engineering-specific payload under metadata.devAgentPayload.",
+  "allOf": [
+    {
+      "$ref": "../../KAVEEP-CORE/schemas/report-envelope.schema.json"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "module": {
+          "const": "KAVEEP-DEV-AGENT"
+        },
+        "metadata": {
+          "type": "object",
+          "required": [
+            "devAgentPayload"
+          ],
+          "properties": {
+            "devAgentPayload": {
+              "$ref": "#/$defs/devAgentPayload"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "idRef": {
+      "type": "string",
+      "minLength": 1
+    },
+    "externalReportRef": {
+      "type": "object",
+      "required": [
+        "owner",
+        "schemaRef",
+        "reportId"
+      ],
+      "properties": {
+        "owner": {
+          "type": "string",
+          "enum": [
+            "KAVEEP-CORE",
+            "KAVEEP-POLICY",
+            "KAVEEP-SIA",
+            "KAVEEP-RO",
+            "KAVEEP-COMMAND-CENTER"
+          ]
+        },
+        "schemaRef": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reportId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evidenceRef": {
+          "type": "string",
+          "pattern": "^evidence_[A-Za-z0-9][A-Za-z0-9_-]*$"
+        },
+        "auditRef": {
+          "type": "string",
+          "pattern": "^audit_[A-Za-z0-9][A-Za-z0-9_-]*$"
+        },
+        "summary": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "fileChangeProposal": {
+      "type": "object",
+      "required": [
+        "path",
+        "changeType",
+        "status"
+      ],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "changeType": {
+          "type": "string",
+          "enum": [
+            "create",
+            "modify",
+            "delete",
+            "rename",
+            "move",
+            "no_change"
+          ]
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "proposed",
+            "approved",
+            "rejected",
+            "blocked",
+            "implemented",
+            "no_action"
+          ]
+        },
+        "reason": {
+          "type": "string"
+        },
+        "requiresApproval": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "checkResult": {
+      "type": "object",
+      "required": [
+        "name",
+        "status"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "passed",
+            "failed",
+            "blocked",
+            "not_run",
+            "unverified"
+          ]
+        },
+        "evidenceRef": {
+          "type": "string",
+          "pattern": "^evidence_[A-Za-z0-9][A-Za-z0-9_-]*$"
+        },
+        "notes": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "devAgentPayload": {
+      "type": "object",
+      "required": [
+        "requestSummary",
+        "engineeringPlan",
+        "validationResults",
+        "sandboxStatus",
+        "recommendedNextAction"
+      ],
+      "properties": {
+        "requestSummary": {
+          "type": "string",
+          "minLength": 1
+        },
+        "repositoryRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/idRef"
+          },
+          "uniqueItems": true
+        },
+        "missionId": {
+          "type": "string",
+          "pattern": "^mission_[A-Za-z0-9][A-Za-z0-9_-]*$"
+        },
+        "workflowId": {
+          "type": "string",
+          "pattern": "^workflow_[A-Za-z0-9][A-Za-z0-9_-]*$"
+        },
+        "taskId": {
+          "type": "string",
+          "pattern": "^task_[A-Za-z0-9][A-Za-z0-9_-]*$"
+        },
+        "engineeringPlan": {
+          "$ref": "engineering-plan.schema.json"
+        },
+        "engineeringPlanRef": {
+          "type": "string",
+          "pattern": "^plan_[A-Za-z0-9][A-Za-z0-9_-]*$"
+        },
+        "proposedChanges": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/fileChangeProposal"
+          }
+        },
+        "affectedFiles": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "policyEvaluationRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/externalReportRef"
+          }
+        },
+        "riskAssessmentRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/externalReportRef"
+          }
+        },
+        "approvalRequestRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/externalReportRef"
+          }
+        },
+        "siaReportRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/externalReportRef"
+          }
+        },
+        "roReportRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/externalReportRef"
+          }
+        },
+        "commandCenterReportRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/externalReportRef"
+          }
+        },
+        "testPlan": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "testResults": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/checkResult"
+          }
+        },
+        "validationResults": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/checkResult"
+          }
+        },
+        "sandboxStatus": {
+          "type": "string",
+          "enum": [
+            "not_prepared",
+            "prepared",
+            "implemented",
+            "blocked",
+            "no_action"
+          ]
+        },
+        "rollbackPlan": {
+          "type": "string"
+        },
+        "limitations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "recommendedNextAction": {
+          "type": "string",
+          "enum": [
+            "no_action",
+            "request_more_evidence",
+            "request_policy_evaluation",
+            "request_human_approval",
+            "prepare_sandbox",
+            "run_tests",
+            "request_ro_review",
+            "submit_for_command_center_review"
+          ]
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

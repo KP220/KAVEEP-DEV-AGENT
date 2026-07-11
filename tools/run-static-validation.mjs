@@ -1,0 +1,2 @@
+import { readFile } from "node:fs/promises"; import path from "node:path"; import { runStaticValidation } from "../src/execution/static-validation-runner.mjs";
+const requestPath=process.argv[2];if(!requestPath)throw new Error("Usage: node tools/run-static-validation.mjs <request.json>");const result=await runStaticValidation(JSON.parse(await readFile(path.resolve(requestPath),"utf8")));process.stdout.write(JSON.stringify(result,null,2)+"\n");if(result.status!=="passed")process.exitCode=1;

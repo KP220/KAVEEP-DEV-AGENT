@@ -1,0 +1,26 @@
+import { randomBytes } from "node:crypto";
+import { readFile } from "node:fs/promises";
+import path from "node:path";
+import { LlmAdapterRegistry, OpenAIResponsesAdapter } from "../brain/engineering-brain.mjs";
+import { EnvironmentSecretProvider, loadLocalConfig } from "../config/local-config.mjs";
+import { WindowsDpapiSecretProvider } from "../config/windows-dpapi-secret-provider.mjs";
+import { runEnvironmentDoctor } from "../config/environment-doctor.mjs";
+import { cancelDurableSession, createDurableSessionStore, persistStandaloneSession, recoverDurableSession, replayDurableSession } from "../persistence/durable-session-store.mjs";
+
+export function createSessionRequest(config, authoritySnapshot, missionLock, command, options = {}) {
+  if (!String(command).trim()) throw new Error("Engineering command is required.");
+  if (authoritySnapshot.repositoryRoot !== config.repositoryRoot || missionLock.authoritySnapshotRef !== authoritySnapshot.authoritySnapshotId || authoritySnapshot.status !== "verified" || missionLock.status !== "active") throw new Error("Authority Snapshot, Mission Lock, and configured repository do not correlate.");
+  return { sessionRequestId: `standalone_session_request_${options.id ?? randomBytes(10).toString("hex")}`, schemaVersion: "1.0.0", command: String(command).trim(), repositoryRoot: config.repositoryRoot, authoritySnapshot, missionLock, brain: { providerId: config.provider.id, model: config.provider.model, budget: { maxContextCharacters: config.defaults.maxContextCharacters, maxOutputTokens: config.defaults.maxOutputTokens, maxEdits: config.defaults.maxEdits, timeoutMs: 120000 }, maxContextFiles: 50 }, sandboxLimits: { maxFiles: 10000, maxDirectories: 2000, maxTotalBytes: 268435456, maxSingleFileBytes: 2097152, maxDepth: 30, maxPathLength: 512, maxLifetimeSeconds: 7200 }, workspaceIndex: { enabled: true, indexRoot: config.roots.workspaceIndex, limits: { maxFiles: 20000, maxDirectories: 5000, maxDepth: 30, maxFileBytes: 1048576 }, retrieval: { maxResults: 30, maxSnippetCharacters: 1000, maxContextCharacters: 30000 } }, loop: { maxAttempts: config.defaults.maxAttempts, semanticMaxAttempts: config.defaults.semanticMaxAttempts, maxSemanticFeedbackCharacters: 20000 }, container: { enabled: true, required: config.execution.requireContainer, executionProfile: config.execution.profile, image: config.execution.image, allowedImages: config.execution.allowedImages, operations: ["lint", "typecheck", "test", "build"], limits: { timeoutMsPerOperation: 300000, maxOutputBytes: 1048576, memoryMb: 2048, cpus: 2, pids: 256 } }, status: "proposed", createdAt: (options.clock?.() ?? new Date()).toISOString() };
+}
+async function governanceFiles(authorityFile, missionFile) { return { authoritySnapshot: JSON.parse(await readFile(path.resolve(authorityFile), "utf8")), missionLock: JSON.parse(await readFile(path.resolve(missionFile), "utf8")) }; }
+async function providerRegistry(config, options) { if (options.registry) return options.registry; const provider = config.provider.secretProvider === "windows-dpapi" ? new WindowsDpapiSecretProvider(options.dpapiOptions) : new EnvironmentSecretProvider(options.environment ?? process.env); const apiKey = (await provider.resolve(config.provider.secretReference)).reveal(); return new LlmAdapterRegistry().register("openai", new OpenAIResponsesAdapter({ apiKey, fetchImpl: options.fetchImpl })); }
+export async function runConfiguredSession({ configPath, authorityFile, missionFile, command }, options = {}) {
+  const config = await loadLocalConfig(configPath); const doctor = await runEnvironmentDoctor(configPath, options.doctorOptions ?? options); if (!doctor.readyForStandalone && !options.allowMockReadiness) return { status: "blocked", doctor, durable: null };
+  const { authoritySnapshot, missionLock } = await governanceFiles(authorityFile, missionFile); const request = createSessionRequest(config, authoritySnapshot, missionLock, command, options);
+  Object.assign(request.brain, { mode: options.engineeringMode ?? "dynamic_tool_loop", maxDynamicTurns: 15, maxDynamicToolCalls: 30, maxToolResultCharacters: 20000, maxTranscriptCharacters: 200000 });
+  await createDurableSessionStore(config.roots.sessions, {}, options);
+  const durable = await persistStandaloneSession(config.roots.sessions, request, await providerRegistry(config, options), { ...options, sessionId: request.sessionRequestId.replace(/^standalone_session_request_/, "") }); return { status: durable.result.status, doctor, request, durable };
+}
+export async function statusConfiguredSession(configPath, sessionId) { const config = await loadLocalConfig(configPath); return replayDurableSession(config.roots.sessions, sessionId); }
+export async function recoverConfiguredSession(configPath, sessionId, options = {}) { const config = await loadLocalConfig(configPath); const doctor = await runEnvironmentDoctor(configPath, options.doctorOptions ?? options); if (!doctor.readyForStandalone && !options.allowMockReadiness) return { status: "blocked", doctor }; return recoverDurableSession(config.roots.sessions, sessionId, await providerRegistry(config, options), options); }
+export async function cancelConfiguredSession(configPath, sessionId, options = {}) { const config = await loadLocalConfig(configPath); return cancelDurableSession(config.roots.sessions, sessionId, options); }

@@ -1,0 +1,20 @@
+{
+  "missionLockId": "mission_lock_kaveep_dev_agent_001",
+  "schemaVersion": "1.0.0",
+  "authoritySnapshotRef": "authority_snapshot_kaveep_dev_agent_001",
+  "lockedPrinciples": [
+    { "principleId": "principle_human_authority", "name": "Human Authority", "statement": "Human authority remains above AI autonomy.", "sourceDocumentRef": "authority_document_engineering_constitution" },
+    { "principleId": "principle_validation_before_trust", "name": "Validation Before Trust", "statement": "Engineering output must be validated before it is trusted.", "sourceDocumentRef": "authority_document_engineering_charter" }
+  ],
+  "protectedArtifacts": [
+    { "path": "ENGINEERING-CONSTITUTION.md", "protectionLevel": "governance_locked", "reason": "The Engineering Constitution requires its owning governance process." },
+    { "path": "ENGINEERING-CHARTER.md", "protectionLevel": "human_approval_required", "reason": "The Engineering Charter is a protected authority artifact." }
+  ],
+  "prohibitedAutonomousChanges": ["mission", "identity", "constitution", "governance", "authority_hierarchy", "protected_policy", "budget_authority", "human_approval_rules", "kcp_authority", "repository_ownership"],
+  "kcpRequiredChanges": ["architecture", "public_contract", "cross_repository_contract", "security_boundary", "governance", "data_migration", "production_release", "agent_conflict"],
+  "humanApprovalRequiredChanges": ["mission", "identity", "constitution", "governance", "authority_hierarchy", "protected_policy", "budget_authority", "human_approval_rules", "kcp_authority", "repository_ownership", "source_write_back", "git_write", "release", "deployment", "destructive_action"],
+  "limitations": ["Mission Lock grants no execution or governance-change authority."],
+  "status": "active",
+  "createdAt": "2026-07-10T00:00:00.000Z"
+}
+

@@ -166,6 +166,38 @@ KAVEEP-DEV-AGENT is the official Engineering Foundry of the KAVEEP ecosystem.
 
 ---
 
+## AI Software Engineering Organization
+
+A governed engineering organization composed of specialized AI-assisted engineering capabilities, engines, workflows, reports, validation gates, audit records, and human approval.
+
+An AI Software Engineering Organization is not equivalent to a chatbot or coding assistant.
+
+---
+
+## Thai Command Interface
+
+The primary human communication interface through which users may express engineering intent in natural Thai.
+
+The interface translates Thai engineering intent into governed engineering requests without weakening traceability, policy compliance, validation, or approval requirements.
+
+---
+
+## KAVEEP Brain
+
+The replaceable reasoning layer used by KAVEEP-DEV-AGENT to perform engineering analysis, planning, review, and task support.
+
+KAVEEP Brain may use cloud or local language models through an LLM Adapter.
+
+KAVEEP engineering authority shall never depend on a single model provider.
+
+---
+
+## KCP Verification
+
+The verification process that confirms engineering outputs against verified KAVEEP knowledge before approval or release.
+
+---
+
 # Terminology Rule
 
 Official KAVEEP engineering documents shall use terminology defined in this glossary.

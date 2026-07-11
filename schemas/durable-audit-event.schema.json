@@ -1,0 +1,5 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema","$id":"https://kaveep.dev/dev-agent/schemas/durable-audit-event.schema.json","title":"KAVEEP DEV-AGENT Durable Audit Event","type":"object",
+  "required":["eventId","schemaVersion","runRef","sequence","previousEventHash","eventType","payloadHash","createdAt","eventHash"],
+  "properties":{"eventId":{"type":"string","pattern":"^audit_event_[A-Za-z0-9][A-Za-z0-9_-]*$"},"schemaVersion":{"type":"string","pattern":"^[0-9]+\\.[0-9]+\\.[0-9]+$"},"runRef":{"type":"string","pattern":"^dev_run_[A-Za-z0-9][A-Za-z0-9_-]*$"},"sequence":{"type":"integer","minimum":1},"previousEventHash":{"type":"string","pattern":"^[a-f0-9]{64}$"},"eventType":{"type":"string","enum":["run_created","state_transition","run_terminal","recovery_started"]},"payloadHash":{"type":"string","pattern":"^[a-f0-9]{64}$"},"createdAt":{"type":"string","format":"date-time"},"eventHash":{"type":"string","pattern":"^[a-f0-9]{64}$"}},"additionalProperties":false
+}

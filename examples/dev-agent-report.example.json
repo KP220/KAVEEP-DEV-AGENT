@@ -1,0 +1,258 @@
+{
+  "reportId": "report_dev_agent_contract_integration_001",
+  "sessionId": "session_contract_integration_001",
+  "module": "KAVEEP-DEV-AGENT",
+  "moduleVersion": "1.0.0",
+  "contractVersion": "1.0.0",
+  "status": "no_action",
+  "verificationStatus": "unverified",
+  "riskLevel": "moderate",
+  "evidenceRefs": [
+    "evidence_repo_discovery_001"
+  ],
+  "policyRefs": [
+    "policy_engineering_safety_001"
+  ],
+  "auditRefs": [
+    "audit_contract_integration_001"
+  ],
+  "warnings": [
+    {
+      "code": "DEV_AGENT_EXTERNAL_APPROVAL_REQUIRED",
+      "message": "External writes, merge, release, or deployment require explicit human approval.",
+      "severity": "warning",
+      "source": "KAVEEP-DEV-AGENT"
+    }
+  ],
+  "errors": [],
+  "metadata": {
+    "devAgentPayload": {
+      "requestSummary": "Contract integration report for KAVEEP-DEV-AGENT without runtime execution.",
+      "repositoryRefs": [
+        "KAVEEP-DEV-AGENT",
+        "KAVEEP-CORE",
+        "KAVEEP-POLICY",
+        "KAVEEP-SIA",
+        "KAVEEP-RO",
+        "KAVEEP-COMMAND-CENTER"
+      ],
+      "missionId": "mission_contract_integration_001",
+      "workflowId": "workflow_dev_agent_contracts_001",
+      "taskId": "task_dev_agent_report_schema_001",
+      "engineeringPlan": {
+        "planId": "plan_dev_agent_report_contract_001",
+        "schemaVersion": "1.0.0",
+        "planVersion": "1.0.0",
+        "title": "Validate DEV-AGENT Report Contract",
+        "objective": "Reference the dedicated Engineering Plan contract from the DEV-AGENT report payload.",
+        "status": "unverified",
+        "requestId": "request_dev_agent_report_contract_001",
+        "missionId": "mission_contract_integration_001",
+        "workflowId": "workflow_dev_agent_contracts_001",
+        "taskId": "task_dev_agent_report_schema_001",
+        "sessionRef": "session_contract_integration_001",
+        "requestSummary": "Contract integration report for KAVEEP-DEV-AGENT without runtime execution.",
+        "engineeringObjective": "Preserve report traceability while using a reusable Engineering Plan contract.",
+        "interpretedIntent": "The report should include a validated plan artifact, not a duplicate inline plan definition.",
+        "assumptions": [
+          {
+            "statement": "The report is a final evidence container and does not authorize execution.",
+            "verificationStatus": "verified",
+            "evidenceRef": "evidence_repo_discovery_001"
+          }
+        ],
+        "constraints": [
+          "A valid plan does not authorize implementation.",
+          "Foreign repository records are referenced rather than embedded.",
+          "Human approval is required before protected actions."
+        ],
+        "acceptanceCriteria": [
+          "The report example validates against the DEV-AGENT report schema.",
+          "The embedded engineeringPlan validates against engineering-plan.schema.json.",
+          "The report preserves no_action and unverified semantics."
+        ],
+        "scope": {
+          "targetRepositories": [
+            "KAVEEP-DEV-AGENT"
+          ],
+          "affectedComponents": [
+            "report schema",
+            "report example",
+            "validation tooling"
+          ],
+          "affectedFiles": [
+            "schemas/dev-agent-report.schema.json",
+            "examples/dev-agent-report.example.json",
+            "schemas/engineering-plan.schema.json"
+          ],
+          "excludedFiles": [
+            "../../KAVEEP-POLICY/schemas/risk-assessment.schema.json",
+            "../../KAVEEP-SIA/schemas/storage-report.schema.json"
+          ],
+          "inScope": [
+            "Report integration with Engineering Plan contract"
+          ],
+          "outOfScope": [
+            "Runtime execution",
+            "Policy decision creation",
+            "External writes"
+          ]
+        },
+        "steps": [
+          {
+            "stepId": "step_report_plan_contract_001",
+            "sequence": 1,
+            "title": "Reference Engineering Plan Contract",
+            "description": "Use the dedicated Engineering Plan schema in the DEV-AGENT report payload.",
+            "actionType": "validate",
+            "targetRefs": [
+              "schemas/dev-agent-report.schema.json",
+              "schemas/engineering-plan.schema.json"
+            ],
+            "requiredInputs": [
+              "Engineering Plan schema"
+            ],
+            "expectedOutputs": [
+              "Validated report example"
+            ],
+            "validationRequirements": [
+              "Report validation passes.",
+              "Plan validation passes through schema reference."
+            ],
+            "riskNotes": "Validation does not authorize implementation.",
+            "approvalRequired": false,
+            "status": "unverified"
+          }
+        ],
+        "validationIntent": {
+          "testPlan": [
+            "Run npm.cmd run validate:examples."
+          ],
+          "validationPlan": [
+            "Validate report and engineering plan examples."
+          ],
+          "lintPlan": [
+            "Run git diff --check."
+          ],
+          "buildPlan": [
+            "No build required."
+          ],
+          "reviewPlan": [
+            "Review planning versus execution semantics."
+          ],
+          "rollbackPlan": "Revert report integration if the Engineering Plan contract is rejected."
+        },
+        "safety": {
+          "riskLevel": "moderate",
+          "sandboxRequired": false,
+          "sandboxRequirements": [
+            "No runtime execution."
+          ],
+          "protectedActions": [
+            "external_write",
+            "git_write"
+          ],
+          "planAuthorizesExecution": false
+        },
+        "executionReadiness": "unverified",
+        "blockingReasons": [
+          "Policy evaluation and human approval are required before protected actions."
+        ],
+        "recommendedNextAction": "request_policy_evaluation",
+        "createdAt": "2026-07-10T01:20:00.000Z",
+        "updatedAt": "2026-07-10T01:20:00.000Z"
+      },
+      "engineeringPlanRef": "plan_dev_agent_report_contract_001",
+      "proposedChanges": [
+        {
+          "path": "schemas/dev-agent-report.schema.json",
+          "changeType": "create",
+          "status": "proposed",
+          "reason": "DEV-AGENT needs an engineering-specific report payload composed with the CORE report envelope.",
+          "requiresApproval": false
+        }
+      ],
+      "affectedFiles": [
+        "schemas/dev-agent-report.schema.json",
+        "examples/dev-agent-report.example.json"
+      ],
+      "policyEvaluationRefs": [
+        {
+          "owner": "KAVEEP-POLICY",
+          "schemaRef": "../../KAVEEP-POLICY/schemas/policy-report.schema.json",
+          "reportId": "policy_contract_reference_001",
+          "evidenceRef": "evidence_repo_discovery_001",
+          "summary": "Policy-owned evaluation is referenced, not embedded."
+        }
+      ],
+      "riskAssessmentRefs": [
+        {
+          "owner": "KAVEEP-POLICY",
+          "schemaRef": "../../KAVEEP-POLICY/schemas/risk-assessment.schema.json",
+          "reportId": "risk_contract_reference_001",
+          "evidenceRef": "evidence_repo_discovery_001"
+        }
+      ],
+      "approvalRequestRefs": [
+        {
+          "owner": "KAVEEP-POLICY",
+          "schemaRef": "../../KAVEEP-POLICY/schemas/approval-request.schema.json",
+          "reportId": "approval_contract_reference_001",
+          "auditRef": "audit_contract_integration_001"
+        }
+      ],
+      "siaReportRefs": [
+        {
+          "owner": "KAVEEP-SIA",
+          "schemaRef": "../../KAVEEP-SIA/schemas/storage-report.schema.json",
+          "reportId": "sia_storage_reference_001",
+          "summary": "SIA is consumed as read-only system analysis."
+        }
+      ],
+      "roReportRefs": [
+        {
+          "owner": "KAVEEP-RO",
+          "schemaRef": "../../KAVEEP-RO/schemas/common-report.schema.json",
+          "reportId": "ro_repository_review_reference_001",
+          "summary": "RO is consumed as repository analysis and post-change review authority."
+        }
+      ],
+      "commandCenterReportRefs": [
+        {
+          "owner": "KAVEEP-COMMAND-CENTER",
+          "schemaRef": "../../KAVEEP-COMMAND-CENTER/schemas/command-center-report.schema.json",
+          "reportId": "command_center_report_reference_001",
+          "summary": "Command Center receives DEV-AGENT report status and coordinates human review."
+        }
+      ],
+      "testPlan": [
+        "Validate DEV-AGENT report example against schemas/dev-agent-report.schema.json.",
+        "Resolve the CORE report envelope reference from the sibling repository layout."
+      ],
+      "testResults": [
+        {
+          "name": "Example validation",
+          "status": "not_run",
+          "notes": "Status is updated by validation tooling, not by the static example."
+        }
+      ],
+      "validationResults": [
+        {
+          "name": "Contract ownership review",
+          "status": "unverified",
+          "evidenceRef": "evidence_repo_discovery_001",
+          "notes": "Insufficient evidence remains unverified until validation is executed."
+        }
+      ],
+      "sandboxStatus": "no_action",
+      "rollbackPlan": "No runtime or external write action is performed by this report artifact.",
+      "limitations": [
+        "Foreign repository records are referenced rather than embedded.",
+        "Human approval is required before any external write, merge, release, or deployment."
+      ],
+      "recommendedNextAction": "request_policy_evaluation"
+    }
+  },
+  "createdAt": "2026-07-10T01:20:00.000Z",
+  "updatedAt": "2026-07-10T01:20:00.000Z"
+}

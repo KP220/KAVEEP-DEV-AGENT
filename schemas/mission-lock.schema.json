@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kaveep.dev/dev-agent/schemas/mission-lock.schema.json",
+  "title": "KAVEEP DEV-AGENT Mission Lock",
+  "description": "Explicit protected mission and governance boundaries. This contract grants no execution authority.",
+  "type": "object",
+  "required": ["missionLockId", "schemaVersion", "authoritySnapshotRef", "lockedPrinciples", "protectedArtifacts", "prohibitedAutonomousChanges", "kcpRequiredChanges", "humanApprovalRequiredChanges", "limitations", "status", "createdAt"],
+  "properties": {
+    "missionLockId": { "type": "string", "pattern": "^mission_lock_[A-Za-z0-9][A-Za-z0-9_-]*$" },
+    "schemaVersion": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "authoritySnapshotRef": { "type": "string", "pattern": "^authority_snapshot_[A-Za-z0-9][A-Za-z0-9_-]*$" },
+    "lockedPrinciples": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["principleId", "name", "statement", "sourceDocumentRef"],
+        "properties": {
+          "principleId": { "type": "string", "pattern": "^principle_[A-Za-z0-9][A-Za-z0-9_-]*$" },
+          "name": { "type": "string", "minLength": 1 },
+          "statement": { "type": "string", "minLength": 1 },
+          "sourceDocumentRef": { "type": "string", "pattern": "^authority_document_[A-Za-z0-9][A-Za-z0-9_-]*$" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "protectedArtifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["path", "protectionLevel", "reason"],
+        "properties": {
+          "path": { "type": "string", "minLength": 1 },
+          "protectionLevel": { "type": "string", "enum": ["mission_locked", "governance_locked", "human_approval_required"] },
+          "reason": { "type": "string", "minLength": 1 }
+        },
+        "additionalProperties": false
+      }
+    },
+    "prohibitedAutonomousChanges": { "type": "array", "items": { "type": "string", "enum": ["mission", "identity", "constitution", "governance", "authority_hierarchy", "protected_policy", "budget_authority", "human_approval_rules", "kcp_authority", "repository_ownership"] }, "uniqueItems": true },
+    "kcpRequiredChanges": { "type": "array", "items": { "type": "string", "enum": ["architecture", "public_contract", "cross_repository_contract", "security_boundary", "governance", "data_migration", "production_release", "agent_conflict"] }, "uniqueItems": true },
+    "humanApprovalRequiredChanges": { "type": "array", "items": { "type": "string", "enum": ["mission", "identity", "constitution", "governance", "authority_hierarchy", "protected_policy", "budget_authority", "human_approval_rules", "kcp_authority", "repository_ownership", "source_write_back", "git_write", "release", "deployment", "destructive_action"] }, "uniqueItems": true },
+    "limitations": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "status": { "type": "string", "enum": ["active", "unverified", "blocked"] },
+    "createdAt": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false
+}
+
