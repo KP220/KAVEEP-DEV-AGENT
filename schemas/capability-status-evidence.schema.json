@@ -1,0 +1,421 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kaveep.dev/dev-agent/schemas/capability-status-evidence.schema.json",
+  "title": "KAVEEP DEV-AGENT Capability Status Evidence",
+  "description": "Strict evidence contract for repository capability and certification status claims. Evidence is descriptive and grants no execution, write, network, approval, policy, or certification authority.",
+  "type": "object",
+  "required": [
+    "evidenceId",
+    "evidenceType",
+    "path",
+    "claim",
+    "status",
+    "limitations"
+  ],
+  "properties": {
+    "evidenceId": {
+      "type": "string",
+      "pattern": "^evidence_[a-z0-9][a-z0-9_-]*$",
+      "minLength": 10,
+      "maxLength": 160
+    },
+    "evidenceType": {
+      "type": "string",
+      "enum": [
+        "SPECIFICATION",
+        "IMPLEMENTATION",
+        "TEST",
+        "QUALITY_GATE",
+        "INTEGRATION_RESULT",
+        "LIVE_CERTIFICATION",
+        "INDEPENDENT_REVIEW",
+        "PRODUCTION_RECORD",
+        "AUTHORITY_DOCUMENT",
+        "LIMITATION_RECORD"
+      ]
+    },
+    "path": {
+      "$ref": "#/$defs/repositoryRelativePath"
+    },
+    "claim": {
+      "type": "string",
+      "enum": [
+        "PROPOSED",
+        "SPECIFIED",
+        "IMPLEMENTED",
+        "SELF_TESTED",
+        "INTEGRATION_TESTED",
+        "LIVE_CERTIFIED",
+        "INDEPENDENTLY_REVIEWED",
+        "PRODUCTION_PROVEN",
+        "DEPRECATED",
+        "BLOCKED",
+        "UNVERIFIED"
+      ]
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "PRESENT",
+        "PASSED",
+        "FAILED",
+        "UNVERIFIED",
+        "UNAVAILABLE",
+        "EXPIRED",
+        "BLOCKED"
+      ]
+    },
+    "limitations": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 1000
+      },
+      "uniqueItems": true,
+      "maxItems": 100
+    },
+    "contentSha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "evidenceVersion": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "runtime": {
+      "type": "object",
+      "required": [
+        "required",
+        "available",
+        "executionAttempted"
+      ],
+      "properties": {
+        "required": {
+          "type": "boolean"
+        },
+        "available": {
+          "type": ["boolean", "null"]
+        },
+        "executionAttempted": {
+          "type": "boolean"
+        },
+        "executionSucceeded": {
+          "type": ["boolean", "null"]
+        },
+        "environment": {
+          "type": ["string", "null"],
+          "minLength": 1,
+          "maxLength": 300
+        },
+        "reason": {
+          "type": ["string", "null"],
+          "minLength": 1,
+          "maxLength": 1000
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "executionAttempted": {
+                "const": false
+              }
+            },
+            "required": [
+              "executionAttempted"
+            ]
+          },
+          "then": {
+            "properties": {
+              "executionSucceeded": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "available": {
+                "const": false
+              }
+            },
+            "required": [
+              "available"
+            ]
+          },
+          "then": {
+            "properties": {
+              "executionAttempted": {
+                "const": false
+              },
+              "executionSucceeded": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "reason"
+            ]
+          }
+        }
+      ],
+      "additionalProperties": false
+    },
+    "review": {
+      "type": "object",
+      "required": [
+        "independent"
+      ],
+      "properties": {
+        "independent": {
+          "type": "boolean"
+        },
+        "reviewerAuthority": {
+          "type": ["string", "null"],
+          "minLength": 1,
+          "maxLength": 300
+        },
+        "reviewScope": {
+          "type": ["string", "null"],
+          "minLength": 1,
+          "maxLength": 1000
+        }
+      },
+      "additionalProperties": false
+    },
+    "production": {
+      "type": "object",
+      "required": [
+        "observed"
+      ],
+      "properties": {
+        "observed": {
+          "type": "boolean"
+        },
+        "environment": {
+          "type": ["string", "null"],
+          "minLength": 1,
+          "maxLength": 300
+        },
+        "scope": {
+          "type": ["string", "null"],
+          "minLength": 1,
+          "maxLength": 1000
+        },
+        "version": {
+          "type": ["string", "null"],
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "evidenceType": {
+            "const": "LIVE_CERTIFICATION"
+          }
+        },
+        "required": [
+          "evidenceType"
+        ]
+      },
+      "then": {
+        "required": [
+          "runtime"
+        ],
+        "properties": {
+          "runtime": {
+            "properties": {
+              "required": {
+                "const": true
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "claim": {
+            "const": "LIVE_CERTIFIED"
+          }
+        },
+        "required": [
+          "claim"
+        ]
+      },
+      "then": {
+        "properties": {
+          "evidenceType": {
+            "const": "LIVE_CERTIFICATION"
+          },
+          "status": {
+            "const": "PASSED"
+          },
+          "runtime": {
+            "properties": {
+              "required": {
+                "const": true
+              },
+              "available": {
+                "const": true
+              },
+              "executionAttempted": {
+                "const": true
+              },
+              "executionSucceeded": {
+                "const": true
+              }
+            },
+            "required": [
+              "required",
+              "available",
+              "executionAttempted",
+              "executionSucceeded"
+            ]
+          }
+        },
+        "required": [
+          "runtime"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "claim": {
+            "const": "INDEPENDENTLY_REVIEWED"
+          }
+        },
+        "required": [
+          "claim"
+        ]
+      },
+      "then": {
+        "properties": {
+          "evidenceType": {
+            "const": "INDEPENDENT_REVIEW"
+          },
+          "status": {
+            "const": "PASSED"
+          },
+          "review": {
+            "properties": {
+              "independent": {
+                "const": true
+              }
+            }
+          }
+        },
+        "required": [
+          "review"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "claim": {
+            "const": "PRODUCTION_PROVEN"
+          }
+        },
+        "required": [
+          "claim"
+        ]
+      },
+      "then": {
+        "properties": {
+          "evidenceType": {
+            "const": "PRODUCTION_RECORD"
+          },
+          "status": {
+            "const": "PASSED"
+          },
+          "production": {
+            "properties": {
+              "observed": {
+                "const": true
+              }
+            }
+          }
+        },
+        "required": [
+          "production"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "enum": [
+              "FAILED",
+              "UNVERIFIED",
+              "UNAVAILABLE",
+              "EXPIRED",
+              "BLOCKED"
+            ]
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "then": {
+        "properties": {
+          "limitations": {
+            "minItems": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "evidenceType": {
+            "const": "INDEPENDENT_REVIEW"
+          }
+        },
+        "required": [
+          "evidenceType"
+        ]
+      },
+      "then": {
+        "required": [
+          "review"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "evidenceType": {
+            "const": "PRODUCTION_RECORD"
+          }
+        },
+        "required": [
+          "evidenceType"
+        ]
+      },
+      "then": {
+        "required": [
+          "production"
+        ]
+      }
+    }
+  ],
+  "$defs": {
+    "repositoryRelativePath": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 500,
+      "pattern": "^(?!/)(?![A-Za-z]:[\\\\/])(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*\\\\)(?!.*//)(?!\\./$)(?!.*(?:^|/)\\./)(?!.*[\\u0000-\\u001F\\u007F]).+$"
+    }
+  },
+  "additionalProperties": false
+}
