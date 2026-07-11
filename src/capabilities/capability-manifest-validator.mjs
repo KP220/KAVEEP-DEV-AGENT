@@ -3,19 +3,8 @@ import {
   readFile,
   realpath
 } from "node:fs/promises";
-
-
-STEP 2 — Find this function:
-
 function resolveInsideRepository(repoRoot, repositoryPath) {
-
-Delete from that function through the end of:
-
 async function readTextFile(repoRoot, repositoryPath) {
-
-Then paste this entire replacement block:
-
-
 function assertLexicalRepositoryContainment(
   repoRoot,
   repositoryPath
@@ -250,11 +239,3 @@ async function readTextFile(
 }
 
 
-Do not change anything after:
-
-function validateTopLevelShape(manifest, errors) {
-
-
-COMMIT MESSAGE:
-
-Harden capability evidence path containment
