@@ -119,6 +119,7 @@
     "certify:dpapi": "node tools/certify-windows-dpapi.mjs",
     "test:dynamic-loop": "node tools/test-dynamic-engineering-loop.mjs",
     "test:evaluations": "node tools/test-engineering-evaluation-runner.mjs",
+    "test:isolated-evaluations": "node tools/test-isolated-task-evaluation-suite.mjs",
     "validate:invalid-standalone-session-request": "node tools/validate-examples.mjs --invalid-standalone-session-request",
     "validate:invalid-standalone-session-result": "node tools/validate-examples.mjs --invalid-standalone-session-result",
     "validate:capability-manifest": "node tools/validate-capability-manifest.mjs",

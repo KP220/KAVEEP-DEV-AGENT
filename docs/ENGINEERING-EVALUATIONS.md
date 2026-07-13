@@ -6,8 +6,10 @@ writing, and multi-file change. Each case must specify expected reviewed paths
 and a latency budget. A passing result requires `awaiting_approval`, unchanged
 source, an exact changed-path match, and a latency result inside its budget.
 
-The current quality gate runs a deterministic mock baseline. It proves the
-scoring contract and its failure modes; it is not live-model quality evidence.
+The current quality gates run both a deterministic scoring baseline and four
+isolated Standalone Engineering Session workflows. The isolated suite produces
+real sandboxed reviewed artifacts for each task class while using a deterministic
+mock provider. Neither suite is live-model quality evidence.
 Live benchmarks must record model/runtime identity, representative fixtures,
 provider cost, latency, and reviewed artifacts without granting execution
 authority.

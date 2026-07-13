@@ -128,6 +128,10 @@ const gates = [
     "tools/test-engineering-evaluation-runner.mjs"
   ],
   [
+    "Isolated Task Evaluation Suite",
+    "tools/test-isolated-task-evaluation-suite.mjs"
+  ],
+  [
     "Capability Manifest",
     "tools/test-capability-manifest.mjs"
   ]
