@@ -125,7 +125,7 @@ await runTest(
     );
     assert.equal(result.capabilitiesInspected.length, 2);
     assert.equal(result.capabilitiesInspected[0].valid, true);
-    assert.equal(result.evidenceInspected.length, 1);
+    assert.equal(result.evidenceInspected.length, 3);
     assert.equal(result.evidenceInspected[0].status, "PRESENT");
   }
 );
@@ -298,7 +298,11 @@ await runTest(
 
     assert.equal(result.status, "UNVERIFIED");
     assert.equal(
-      result.capabilitiesInspected[0].certificationStatus,
+      result.capabilitiesInspected.find(
+        (entry) =>
+          entry.capabilityId ===
+          "repository-capability-status-truth"
+      ).certificationStatus,
       "NOT_REQUIRED"
     );
     assert.notEqual(result.status, "INVALID");
