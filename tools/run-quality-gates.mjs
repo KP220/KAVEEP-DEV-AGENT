@@ -102,6 +102,10 @@ const gates = [
     "Standalone App Surface",
     "tools/test-standalone-app.mjs"
   ],
+  [
+    "Command Center Streaming Surface",
+    "tools/test-command-center-server.mjs"
+  ],
   ["Production Soak", "tools/test-production-soak.mjs"],
   [
     "Release Readiness",

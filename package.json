@@ -108,6 +108,7 @@
     "kaveep": "node tools/kaveep.mjs",
     "llm:llama-cpp": "node tools/kaveep-local-llm.mjs",
     "ui": "node tools/kaveep-ui.mjs",
+    "test:command-center": "node tools/test-command-center-server.mjs",
     "start:local": "node tools/kaveep-start.mjs",
     "test:local-config": "node tools/test-local-config-doctor.mjs",
     "test:standalone-app": "node tools/test-standalone-app.mjs",
