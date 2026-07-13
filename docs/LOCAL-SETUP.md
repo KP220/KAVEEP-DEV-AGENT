@@ -23,6 +23,13 @@ the configured local GGUF model, waits until the local OpenAI-compatible endpoin
 responds, then starts the Command Center at `http://127.0.0.1:8765`. Press
 `Ctrl+C` in that launcher window to stop both services.
 
+Windows login startup uses `tools\KAVEEP-Autostart.cmd`. It starts the model
+and loopback Command Center without opening a browser, and the launcher does
+not start the Command Center until `/v1/models` responds. It is installed as
+the per-user Windows Run entry `KAVEEP DEV-AGENT Local Autostart`; it can be
+disabled or removed in Task Manager's Startup apps or the current user's
+`Run` registry key.
+
 Standalone readiness requires valid config isolation, Node 22+, Git, a running Docker daemon, writable data roots, an explicit model, and an available provider secret. Doctor output contains only `[REDACTED]`, never the secret value.
 
 Generate a complete bounded session request from verified governance artifacts:
