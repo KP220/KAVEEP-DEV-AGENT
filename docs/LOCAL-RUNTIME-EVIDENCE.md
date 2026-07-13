@@ -72,6 +72,15 @@ llama-server slot context. Local sessions now cap context at 12,000 characters
 and 768 output tokens; the overflow did not recur. A fresh one-pass probe then
 returned a proposal after roughly 119.5 seconds, but deterministic validation
 rejected its extra top-level fields. The local adapter now supplies the allowed
-top-level keys explicitly while keeping validation strict. Sandbox cleanup
-completed and no source write was attempted. This is evidence of an incomplete
-local coding-workflow certification, not a successful quality result.
+top-level keys explicitly while keeping validation strict. A subsequent probe
+completed in roughly 63.4 seconds but was rejected because its referenced
+request/plan/context IDs did not correlate exactly. Engineering Brain now gives
+those exact IDs in the system instruction; it still never rewrites provider
+output. The next one-pass probe (`local_eval_0b44565a15f04e7ebea1faa11f19495a`)
+ran for 64,577 ms and passed the reference correlation stage, then was rejected
+because it set `proposalAuthorizesExecution` to true. The system instruction now
+also requires `proposalAuthorizesExecution=false`, `requiresHumanApproval=true`,
+and `status="proposed"` exactly; deterministic validation remains unchanged.
+Sandbox cleanup completed and no source write was attempted. This is evidence
+of an incomplete local coding-workflow certification, not a successful quality
+result.
