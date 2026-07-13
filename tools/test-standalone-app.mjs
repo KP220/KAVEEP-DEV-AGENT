@@ -386,6 +386,8 @@ try {
       "docker-mock"
   };
 
+  const observedEvents = [];
+
   const blocked =
     await runConfiguredSession(
       {
@@ -446,7 +448,10 @@ try {
       },
       {
         ...options,
-        id: "app_run_001"
+        id: "app_run_001",
+        eventSink: async ({ event }) => {
+          observedEvents.push(event.state);
+        }
       }
     );
 
@@ -472,6 +477,9 @@ try {
     run.providerRuntime.correlated,
     true
   );
+
+assert.ok(observedEvents.includes("analyzing"));
+assert.ok(observedEvents.includes(run.durable.result.state));
 
   assert.equal(
     run.request.brain.providerId,
