@@ -16,9 +16,9 @@ ownership of the developer checkout.
 Status: PASSED
 
 `tools/release-readiness.mjs` completed syntax validation and `npm pack --dry-run`
-successfully. The package inventory contained 272 files. The readiness result
-is still `preview_ready_with_blockers`; container and DPAPI certifications are
-not claimed as complete.
+successfully. The package inventory contained 278 files. The readiness result
+is still `preview_ready_with_blockers`: CurrentUser DPAPI is certified, while
+live container isolation is not claimed because the Docker daemon is unavailable.
 
 ## Command Center
 
@@ -31,6 +31,12 @@ Git-write, release, or deployment authority.
 The bundled combined launcher waits for the local model endpoint before starting
 the Command Center. It served the KOSINCHAI Control Center avatar as `image/png`
 from the same loopback-only surface.
+
+On 2026-07-13 the launched services were independently rechecked: `GET
+/v1/models` on `127.0.0.1:8080` returned `kaveep-local`; the Command Center on
+`127.0.0.1:8765` returned HTTP 200; and `POST /v1/chat/completions` returned
+`KAVEEP launcher live.` to the exact-response probe (20 prompt tokens, 7
+completion tokens).
 
 ## Local LLM
 

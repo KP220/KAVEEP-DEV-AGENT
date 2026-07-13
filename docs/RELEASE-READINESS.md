@@ -6,7 +6,7 @@ runtime endpoint have live evidence. The live Node container-isolation check is
 currently blocked because the Docker daemon is unavailable. Interactive
 streaming UX and live Python/Go/Rust profile certification remain incomplete.
 
-The preview is usable for local evaluation when all 28+ quality gates pass and the readiness report says `installablePreview: true`. This is not equivalent to production certification.
+The preview is usable for local evaluation when all registered quality gates pass and the readiness report says `installablePreview: true`. This is not equivalent to production certification.
 
 Set `KAVEEP_CONTAINER_CERTIFICATION_STATUS=certified` and
 `KAVEEP_DPAPI_CERTIFICATION_STATUS=certified` only from verified certification
