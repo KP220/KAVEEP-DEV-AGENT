@@ -23,7 +23,7 @@
     "Existing repository capabilities outside SPEC-038 have not yet been deterministically enumerated and correlated with governing specifications, implementation paths, tests, quality gates, and certification evidence.",
     "SPEC-039 has repository-owned implementation and focused regression coverage, but the preceding SPEC-038 capability is not yet claimed as implemented; highest implemented milestone remains UNVERIFIED.",
     "The highest self-tested milestone remains UNVERIFIED because quality-gate registration is not successful execution evidence.",
-    "The highest live-certified milestone remains UNVERIFIED because no applicable live-runtime certification evidence has been validated by this manifest."
+    "SPEC-039 has a scoped local-runtime certification, but the manifest does not promote an ecosystem-wide highest live-certified milestone while preceding capability evidence remains incomplete."
   ],
   "capabilities": [
     {
@@ -71,7 +71,7 @@
       ],
       "qualityGate": null,
       "capabilityStatus": "IMPLEMENTED",
-      "certificationStatus": "UNVERIFIED",
+      "certificationStatus": "LIVE_CERTIFIED",
       "evidence": [
         {
           "evidenceId": "evidence_spec_039_present",
@@ -90,11 +90,20 @@
           "status": "PRESENT",
           "limitations": ["The adapter has not been exercised against a live local model runtime."],
           "evidenceVersion": "0.1.0"
+        },
+        {
+          "evidenceId": "evidence_spec_039_local_runtime",
+          "evidenceType": "LIVE_CERTIFICATION",
+          "path": "docs/LOCAL-RUNTIME-EVIDENCE.md",
+          "claim": "LIVE_CERTIFIED",
+          "status": "PASSED",
+          "limitations": ["Certifies only the local llama.cpp runtime and OpenAI-compatible endpoint."],
+          "evidenceVersion": "0.1.0"
         }
       ],
       "limitations": [
         "Only explicit OpenAI-compatible HTTP(S) endpoints are supported.",
-        "Live local-model operation and zero-budget usability remain unverified."
+        "Local runtime certification does not certify autonomous coding quality or full workflow operation."
       ],
       "dependencies": [],
       "lastReviewedVersion": "0.33.0"

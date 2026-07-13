@@ -30,9 +30,16 @@ Git-write, release, or deployment authority.
 
 ## Local LLM
 
-Status: BLOCKED
+Status: PASSED — local runtime endpoint only
 
-`llama-server.exe` is available, but no `.gguf` model was present in
-`C:\\KAVEEP\\models` at verification time. No model download was attempted and no
-live local-model claim is made. Place a reviewed model file in that directory or
-provide an explicit model path before rerunning live certification.
+Verified model: `llama-3.2-3b-instruct-q4_k_m.gguf` (2,019,373,920 bytes).
+
+`llama-server.exe` was started on `127.0.0.1:8080` with a 4,096-token context,
+the agent/tool proxy features disabled, and the explicit `kaveep-local` alias.
+The `/v1/models` endpoint returned that alias and `/v1/chat/completions` returned
+the exact requested response: `KAVEEP local model ready.` Usage was 21 prompt
+tokens and 8 completion tokens.
+
+This certifies only the local model runtime and OpenAI-compatible endpoint. It
+does not certify autonomous coding quality, source-write safety, production
+operation, container validation, or the entire DEV-AGENT workflow.
