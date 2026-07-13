@@ -121,6 +121,7 @@
     "test:dynamic-loop": "node tools/test-dynamic-engineering-loop.mjs",
     "test:evaluations": "node tools/test-engineering-evaluation-runner.mjs",
     "test:isolated-evaluations": "node tools/test-isolated-task-evaluation-suite.mjs",
+    "test:signed-migration": "node tools/test-signed-json-migration.mjs",
     "evaluate:local-model": "node tools/evaluate-local-model.mjs",
     "validate:invalid-standalone-session-request": "node tools/validate-examples.mjs --invalid-standalone-session-request",
     "validate:invalid-standalone-session-result": "node tools/validate-examples.mjs --invalid-standalone-session-result",

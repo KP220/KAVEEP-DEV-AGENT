@@ -136,6 +136,10 @@ const gates = [
     "tools/test-isolated-task-evaluation-suite.mjs"
   ],
   [
+    "Signed JSON Migration",
+    "tools/test-signed-json-migration.mjs"
+  ],
+  [
     "Capability Manifest",
     "tools/test-capability-manifest.mjs"
   ]
