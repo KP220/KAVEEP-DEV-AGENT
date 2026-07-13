@@ -13,8 +13,9 @@ if (!await health(`${launch.url}/models`)) {
   for (let attempt = 0; attempt < 120 && !await health(`${launch.url}/models`); attempt += 1) await new Promise((resolve) => setTimeout(resolve, 500));
   if (!await health(`${launch.url}/models`)) { modelProcess.kill(); throw new Error("Local model did not become ready within 60 seconds."); }
 }
-const commandCenter = await serveCommandCenter({ host: "127.0.0.1", port: 8765 });
+const commandCenterUrl = "http://127.0.0.1:8765/";
+const commandCenter = await health(commandCenterUrl) ? { server: null, url: commandCenterUrl } : await serveCommandCenter({ host: "127.0.0.1", port: 8765 });
 process.stdout.write(`KAVEEP ready\nModel: ${launch.url}\nCommand Center: ${commandCenter.url}\nPress Ctrl+C to stop.\n`);
 if (!noOpen && process.platform === "win32") spawn("cmd", ["/c", "start", "", commandCenter.url], { detached: true, stdio: "ignore", windowsHide: true }).unref();
-const shutdown = () => { commandCenter.server.close(() => process.exit(0)); if (modelProcess && !modelProcess.killed) modelProcess.kill(); };
+const shutdown = () => { const finish = () => process.exit(0); if (commandCenter.server) commandCenter.server.close(finish); else finish(); if (modelProcess && !modelProcess.killed) modelProcess.kill(); };
 process.on("SIGINT", shutdown); process.on("SIGTERM", shutdown);
