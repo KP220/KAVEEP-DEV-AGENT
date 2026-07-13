@@ -10,10 +10,14 @@ import path from "node:path";
 import { isInsideRoot } from "../repository/repository-intelligence.mjs";
 
 const CURRENT_CONFIG_VERSION = "1.0.0";
-const SUPPORTED_PROVIDER_IDS = new Set(["openai"]);
+const SUPPORTED_PROVIDER_IDS = new Set([
+  "openai",
+  "local-openai-compatible"
+]);
 const SUPPORTED_SECRET_PROVIDERS = new Set([
   "environment",
-  "windows-dpapi"
+  "windows-dpapi",
+  "none"
 ]);
 const SUPPORTED_EXECUTION_PROFILES = new Set([
   "node",
@@ -105,10 +109,36 @@ function validateProvider(provider) {
     );
   }
 
-  const secretReference = requireNonEmptyString(
-    provider.secretReference,
-    "Secret reference"
-  );
+  const secretReference = String(provider.secretReference ?? "").trim();
+
+  if (providerId === "local-openai-compatible") {
+    if (secretProvider !== "none" || secretReference) {
+      throw new Error("Local provider must not use a secret reference.");
+    }
+
+    let baseUrl;
+    try {
+      baseUrl = new URL(requireNonEmptyString(provider.baseUrl, "Provider baseUrl"));
+    } catch {
+      throw new Error("Local provider baseUrl must be a valid HTTP(S) URL.");
+    }
+
+    if (!["http:", "https:"].includes(baseUrl.protocol)) {
+      throw new Error("Local provider baseUrl must use HTTP(S).");
+    }
+
+    return {
+      id: providerId,
+      model,
+      baseUrl: baseUrl.href.replace(/\/+$/, ""),
+      secretProvider,
+      secretReference
+    };
+  }
+
+  if (!secretReference) {
+    throw new Error("Secret reference must be a non-empty string.");
+  }
 
   if (
     providerId === "openai" &&
@@ -490,18 +520,39 @@ export async function configureSecretReference(
   return config;
 }
 
+export async function configureLocalLlmProvider(
+  configPath,
+  { baseUrl, model }
+) {
+  const config = await loadLocalConfig(configPath);
+  config.provider = validateProvider({
+    id: "local-openai-compatible",
+    model,
+    baseUrl,
+    secretProvider: "none",
+    secretReference: ""
+  });
+  rejectSecrets(config);
+  await atomic(path.resolve(configPath), config);
+  return config;
+}
+
 export const LOCAL_CONFIG_CAPABILITIES = Object.freeze({
   configVersion: CURRENT_CONFIG_VERSION,
-  implementedProviders: Object.freeze(["openai"]),
+  implementedProviders: Object.freeze([
+    "openai",
+    "local-openai-compatible"
+  ]),
   plannedZeroCostLocalProviders: Object.freeze([
     "ollama",
     "openai-compatible-local"
   ]),
   supportedSecretProviders: Object.freeze([
     "environment",
-    "windows-dpapi"
+    "windows-dpapi",
+    "none"
   ]),
-  offlineCapable: false,
-  networkRequired: true,
-  zeroBudgetCoreMode: "PLANNED"
+  offlineCapable: "provider-dependent",
+  networkRequired: "provider-dependent",
+  zeroBudgetCoreMode: "IMPLEMENTED_UNVERIFIED"
 });

@@ -1,19 +1,20 @@
 import { randomBytes } from "node:crypto";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
-import { configureSecretReference, createLocalConfig, EnvironmentSecretProvider, loadLocalConfig } from "../src/config/local-config.mjs";
+import { configureLocalLlmProvider, configureSecretReference, createLocalConfig, EnvironmentSecretProvider, loadLocalConfig } from "../src/config/local-config.mjs";
 import { WindowsDpapiSecretProvider } from "../src/config/windows-dpapi-secret-provider.mjs";
 import { runEnvironmentDoctor } from "../src/config/environment-doctor.mjs";
 import { cancelConfiguredSession, recoverConfiguredSession, runConfiguredSession, statusConfiguredSession } from "../src/app/standalone-app.mjs";
 import { loadSchema } from "./validate-examples.mjs";
 
 const [command, ...args] = process.argv.slice(2);
-if (!command || !["init", "doctor", "request", "run", "status", "recover", "cancel", "secret-import"].includes(command)) {
+if (!command || !["init", "doctor", "local-llm", "request", "run", "status", "recover", "cancel", "secret-import"].includes(command)) {
   console.error("วิธีใช้:\n  kaveep init <config.json> <repository> <data-root> <model> [profile] [image]\n  kaveep doctor <config.json>\n  kaveep request <config.json> <authority.json> <mission.json> <request.json> <command...>\n  kaveep run <config.json> <authority.json> <mission.json> <command...>\n  kaveep status|recover|cancel <config.json> <durable-session-id>"); process.exit(2);
 }
 let result;
 if (command === "init") { const [config, repositoryRoot, dataRoot, model, executionProfile = "node", image = "node:22-bookworm-slim"] = args; if (!model) throw new Error("init arguments are incomplete."); result = await createLocalConfig({ configPath: path.resolve(config), repositoryRoot: path.resolve(repositoryRoot), dataRoot: path.resolve(dataRoot), model, executionProfile, image }); }
 else if (command === "doctor") { if (!args[0]) throw new Error("doctor requires config.json."); result = await runEnvironmentDoctor(path.resolve(args[0])); if (!result.readyForStandalone) process.exitCode = 1; }
+else if (command === "local-llm") { const [configPath, baseUrl, model] = args; if (!configPath || !baseUrl || !model) throw new Error("local-llm requires config.json, base-url, and model."); result = await configureLocalLlmProvider(configPath, { baseUrl, model }); }
 else if (command === "request") {
   const [configFile, authorityFile, missionFile, outputFile, ...words] = args; if (!words.length) throw new Error("request arguments are incomplete.");
   const config = await loadLocalConfig(configFile); const authoritySnapshot = JSON.parse(await readFile(path.resolve(authorityFile), "utf8")); const missionLock = JSON.parse(await readFile(path.resolve(missionFile), "utf8"));

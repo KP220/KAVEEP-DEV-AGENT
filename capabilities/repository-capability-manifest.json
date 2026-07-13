@@ -21,7 +21,7 @@
   "limitations": [
     "The initial canonical manifest records only the SPEC-038 repository capability status truth contract.",
     "Existing repository capabilities outside SPEC-038 have not yet been deterministically enumerated and correlated with governing specifications, implementation paths, tests, quality gates, and certification evidence.",
-    "The highest implemented milestone remains UNVERIFIED until deterministic implementation correlation is completed.",
+    "SPEC-039 has repository-owned implementation and focused regression coverage, but the preceding SPEC-038 capability is not yet claimed as implemented; highest implemented milestone remains UNVERIFIED.",
     "The highest self-tested milestone remains UNVERIFIED because quality-gate registration is not successful execution evidence.",
     "The highest live-certified milestone remains UNVERIFIED because no applicable live-runtime certification evidence has been validated by this manifest."
   ],
@@ -50,6 +50,51 @@
       ],
       "limitations": [
         "Implementation, validator execution, regression testing, and quality-gate integration are not yet claimed by this entry."
+      ],
+      "dependencies": [],
+      "lastReviewedVersion": "0.33.0"
+    },
+    {
+      "capabilityId": "local-openai-compatible-provider",
+      "name": "Local OpenAI-Compatible Provider",
+      "governingSpecification": "specs/SPEC-039.md",
+      "implementationPaths": [
+        "src/brain/engineering-brain.mjs",
+        "src/config/local-config.mjs",
+        "src/app/standalone-app.mjs",
+        "tools/kaveep-local-llm.mjs"
+      ],
+      "testPaths": [
+        "tools/test-engineering-brain.mjs",
+        "tools/test-local-config-doctor.mjs",
+        "tools/test-standalone-app.mjs"
+      ],
+      "qualityGate": null,
+      "capabilityStatus": "IMPLEMENTED",
+      "certificationStatus": "UNVERIFIED",
+      "evidence": [
+        {
+          "evidenceId": "evidence_spec_039_present",
+          "evidenceType": "SPECIFICATION",
+          "path": "specs/SPEC-039.md",
+          "claim": "SPECIFIED",
+          "status": "PRESENT",
+          "limitations": ["Specification presence does not certify a local runtime."],
+          "evidenceVersion": "0.1.0"
+        },
+        {
+          "evidenceId": "evidence_spec_039_implementation",
+          "evidenceType": "IMPLEMENTATION",
+          "path": "src/brain/engineering-brain.mjs",
+          "claim": "IMPLEMENTED",
+          "status": "PRESENT",
+          "limitations": ["The adapter has not been exercised against a live local model runtime."],
+          "evidenceVersion": "0.1.0"
+        }
+      ],
+      "limitations": [
+        "Only explicit OpenAI-compatible HTTP(S) endpoints are supported.",
+        "Live local-model operation and zero-budget usability remain unverified."
       ],
       "dependencies": [],
       "lastReviewedVersion": "0.33.0"

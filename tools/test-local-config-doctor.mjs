@@ -92,22 +92,22 @@ try {
 
   assert.deepEqual(
     LOCAL_CONFIG_CAPABILITIES.implementedProviders,
-    ["openai"]
+    ["openai", "local-openai-compatible"]
   );
 
   assert.equal(
     LOCAL_CONFIG_CAPABILITIES.offlineCapable,
-    false
+    "provider-dependent"
   );
 
   assert.equal(
     LOCAL_CONFIG_CAPABILITIES.networkRequired,
-    true
+    "provider-dependent"
   );
 
   assert.equal(
     LOCAL_CONFIG_CAPABILITIES.zeroBudgetCoreMode,
-    "PLANNED"
+    "IMPLEMENTED_UNVERIFIED"
   );
 
   const loaded = await loadLocalConfig(configPath);

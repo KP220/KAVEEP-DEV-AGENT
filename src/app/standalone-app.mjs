@@ -4,6 +4,7 @@ import path from "node:path";
 
 import {
   LlmAdapterRegistry,
+  OpenAICompatibleChatAdapter,
   OpenAIResponsesAdapter
 } from "../brain/engineering-brain.mjs";
 
@@ -30,8 +31,15 @@ import {
 } from "../persistence/durable-session-store.mjs";
 
 const IMPLEMENTED_PROVIDER_FACTORIES = Object.freeze({
-  openai: createOpenAIAdapter
+  openai: createOpenAIAdapter,
+  "local-openai-compatible": createLocalOpenAiCompatibleAdapter
 });
+
+export function resolveDefaultProfile(options = {}) {
+  const configPath = path.resolve(options.configPath ?? process.env.KAVEEP_CONFIG ?? (process.platform === "win32" ? "C:\\KAVEEP\\data\\config.json" : path.join(process.env.HOME ?? ".", ".kaveep", "config.json")));
+  const root = path.dirname(configPath);
+  return { configPath, authorityFile: path.resolve(options.authorityFile ?? process.env.KAVEEP_AUTHORITY ?? path.join(root, "authority.json")), missionFile: path.resolve(options.missionFile ?? process.env.KAVEEP_MISSION ?? path.join(root, "mission.json")) };
+}
 
 function requireConfiguredProvider(config) {
   const providerId = config?.provider?.id;
@@ -105,6 +113,16 @@ async function createOpenAIAdapter(config, options = {}) {
 
   return new OpenAIResponsesAdapter({
     apiKey,
+    fetchImpl: options.fetchImpl
+  });
+}
+
+async function createLocalOpenAiCompatibleAdapter(config, options = {}) {
+  if (config.provider.id !== "local-openai-compatible") {
+    throw new Error("Local adapter provider mismatch.");
+  }
+  return new OpenAICompatibleChatAdapter({
+    baseUrl: config.provider.baseUrl,
     fetchImpl: options.fetchImpl
   });
 }
@@ -319,9 +337,7 @@ function addDynamicBrainSettings(
   options
 ) {
   Object.assign(request.brain, {
-    mode:
-      options.engineeringMode ??
-      "dynamic_tool_loop",
+    mode: options.engineeringMode ?? (request.brain.providerId === "local-openai-compatible" ? "iterative_proposal_loop" : "dynamic_tool_loop"),
     maxDynamicTurns: 15,
     maxDynamicToolCalls: 30,
     maxToolResultCharacters: 20000,
@@ -441,6 +457,10 @@ export async function runConfiguredSession(
     },
     durable
   };
+}
+
+export async function askConfiguredSession(command, options = {}) {
+  return runConfiguredSession({ ...resolveDefaultProfile(options), command }, options);
 }
 
 export async function statusConfiguredSession(

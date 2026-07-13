@@ -104,16 +104,15 @@ function createCheck(id, status, detail, metadata = {}) {
 }
 
 function createProviderMetadata(config) {
+  const local = config.provider.id === "local-openai-compatible";
   return {
     providerId: config.provider.id,
     model: config.provider.model,
     implementationStatus: "implemented",
     secretProvider: config.provider.secretProvider,
     secretReference: config.provider.secretReference,
-    networkRequired:
-      LOCAL_CONFIG_CAPABILITIES.networkRequired,
-    offlineCapable:
-      LOCAL_CONFIG_CAPABILITIES.offlineCapable,
+    networkRequired: local ? false : true,
+    offlineCapable: local,
     zeroBudgetCoreMode:
       LOCAL_CONFIG_CAPABILITIES.zeroBudgetCoreMode
   };
@@ -348,26 +347,13 @@ export async function runEnvironmentDoctor(
     );
   }
 
-  const secretProvider =
-    createSecretProvider(config, options);
-
   let secretStatus;
-
-  try {
-    secretStatus =
-      await secretProvider.status(
-        config.provider.secretReference
-      );
-  } catch (error) {
-    secretStatus = {
-      provider:
-        config.provider.secretProvider,
-      reference:
-        config.provider.secretReference,
-      available: false,
-      value: "[REDACTED]",
-      error: error.message
-    };
+  if (config.provider.secretProvider === "none") {
+    secretStatus = { provider: "none", reference: "", available: true, value: "[REDACTED]" };
+  } else {
+    const secretProvider = createSecretProvider(config, options);
+    try { secretStatus = await secretProvider.status(config.provider.secretReference); }
+    catch (error) { secretStatus = { provider: config.provider.secretProvider, reference: config.provider.secretReference, available: false, value: "[REDACTED]", error: error.message }; }
   }
 
   checks.push(

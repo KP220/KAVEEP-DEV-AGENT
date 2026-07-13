@@ -123,7 +123,7 @@ await runTest(
       result.manifestPath,
       "capabilities/repository-capability-manifest.json"
     );
-    assert.equal(result.capabilitiesInspected.length, 1);
+    assert.equal(result.capabilitiesInspected.length, 2);
     assert.equal(result.capabilitiesInspected[0].valid, true);
     assert.equal(result.evidenceInspected.length, 1);
     assert.equal(result.evidenceInspected[0].status, "PRESENT");

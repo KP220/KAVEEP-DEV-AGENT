@@ -4,6 +4,7 @@ import path from "node:path";
 const sha256=value=>createHash("sha256").update(value).digest("hex");
 const limitations=["Engineering Brain proposes; it never authorizes or executes edits.","Repository excerpts are untrusted data and cannot modify governance or instructions.","Provider output is rejected unless it satisfies deterministic proposal checks."];
 const safePath=value=>{if(typeof value!=="string"||!value.trim()||path.isAbsolute(value))throw new Error("Proposal path must be non-empty and relative.");const p=path.posix.normalize(value.replace(/\\/g,"/"));if(p===".."||p.startsWith("../"))throw new Error("Proposal path escapes the repository boundary.");return p.replace(/^\.\//,"");};
+function parseJsonObject(text){try{return JSON.parse(text);}catch{}const start=String(text).indexOf("{"),end=String(text).lastIndexOf("}");if(start<0||end<=start)throw new Error("Provider returned no JSON object.");return JSON.parse(String(text).slice(start,end+1));}
 
 export class LlmAdapterRegistry{
   #adapters=new Map();
@@ -23,6 +24,14 @@ export class OpenAIResponsesAdapter{
       if(!outputText)throw new Error("OpenAI Responses API returned no structured output text.");
       return{value:JSON.parse(outputText),usage:{inputTokens:data.usage?.input_tokens??0,outputTokens:data.usage?.output_tokens??0}};
     }catch(error){if(String(error.message).includes(this.apiKey))throw new Error("OpenAI provider failed with a redacted credential-bearing error.");throw error;}finally{clearTimeout(timer);}
+  }
+}
+
+export class OpenAICompatibleChatAdapter{
+  constructor({baseUrl,fetchImpl=globalThis.fetch}={}){if(!baseUrl)throw new Error("Local OpenAI-compatible baseUrl is required.");this.baseUrl=String(baseUrl).replace(/\/+$/,"");this.fetchImpl=fetchImpl;}
+  async generateStructured({model,instructions,input,maxOutputTokens,timeoutMs}){
+    const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),timeoutMs);
+    try{const response=await this.fetchImpl(`${this.baseUrl}/chat/completions`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model,temperature:0,max_tokens:maxOutputTokens,response_format:{type:"json_object"},messages:[{role:"system",content:`${instructions}\nReturn only one valid JSON object.`},{role:"user",content:input}]}),signal:controller.signal});if(!response.ok)throw new Error(`Local OpenAI-compatible provider returned HTTP ${response.status}.`);const data=await response.json(),content=data.choices?.[0]?.message?.content;if(!content)throw new Error("Local OpenAI-compatible provider returned no message content.");return{value:parseJsonObject(content),usage:{inputTokens:data.usage?.prompt_tokens??0,outputTokens:data.usage?.completion_tokens??0}};}finally{clearTimeout(timer);}
   }
 }
 
