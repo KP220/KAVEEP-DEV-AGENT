@@ -164,6 +164,7 @@ export async function runStandaloneSession(request, registry, options = {}) {
 
     await record("validating", "เริ่ม semantic validation");
     if (request.container.enabled) {
+      throwIfAborted(options.signal);
       let container = await runContainerValidation({
         containerRequestId: `container_validation_request_session_${suffix}`, schemaVersion: "1.0.0",
         sandboxId: sandbox.manifest.sandboxId, manifestRef: sandbox.result.manifestRef,
@@ -171,9 +172,11 @@ export async function runStandaloneSession(request, registry, options = {}) {
         operations: request.container.operations, limits: request.container.limits,
         status: "proposed", createdAt: timestamp(options.clock)
       }, { clock: options.clock, processAdapter: options.containerProcessAdapter, dockerExecutable: options.dockerExecutable });
+      throwIfAborted(options.signal);
       result.artifacts.containerValidationAttempts = [container];
       const semanticMaxAttempts = request.loop.semanticMaxAttempts ?? 0;
       for (let semanticAttempt = 1; container.status === "failed" && semanticAttempt <= semanticMaxAttempts; semanticAttempt++) {
+        throwIfAborted(options.signal);
         const feedback = semanticFeedback(container, request.loop.maxSemanticFeedbackCharacters ?? 20000);
         if (!feedback) break;
         await record("engineering", `semantic repair รอบ ${semanticAttempt}/${semanticMaxAttempts}`);
@@ -183,7 +186,8 @@ export async function runStandaloneSession(request, registry, options = {}) {
           schemaVersion: "1.0.0", sandboxId: sandbox.manifest.sandboxId, manifestRef: sandbox.result.manifestRef,
           brainRequest: repairBrainRequest, maxAttempts: request.loop.maxAttempts,
           status: "proposed", createdAt: timestamp(options.clock)
-        }, registry, { clock: options.clock, proposalSchema: options.proposalSchema });
+        }, registry, { clock: options.clock, proposalSchema: options.proposalSchema, signal: options.signal });
+        throwIfAborted(options.signal);
         result.artifacts.engineeringLoop = loop;
         if (loop.status !== "completed") break;
         await record("validating", `ตรวจ semantic validation หลัง repair รอบ ${semanticAttempt}`);
@@ -194,6 +198,7 @@ export async function runStandaloneSession(request, registry, options = {}) {
           operations: request.container.operations, limits: request.container.limits,
           status: "proposed", createdAt: timestamp(options.clock)
         }, { clock: options.clock, processAdapter: options.containerProcessAdapter, dockerExecutable: options.dockerExecutable });
+        throwIfAborted(options.signal);
         result.artifacts.containerValidationAttempts.push(container);
       }
       result.artifacts.containerValidation = container;
@@ -206,6 +211,7 @@ export async function runStandaloneSession(request, registry, options = {}) {
       }
     }
 
+    throwIfAborted(options.signal);
     await record("reviewing", "สร้าง reviewed change และ patch hash");
     const reviewed = await generateReviewedChange({
       reviewRequestId: `reviewed_change_request_session_${suffix}`, schemaVersion: "1.0.0",
