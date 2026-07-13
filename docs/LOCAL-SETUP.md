@@ -18,6 +18,11 @@ For the local Command Center, run `tools\KAVEEP-Command-Center.cmd` on Windows.
 It serves only the local governed session UI; it does not grant write, Git, or
 deployment authority.
 
+For the one-command local experience, run `tools\KAVEEP-Start.cmd`. It starts
+the configured local GGUF model, waits until the local OpenAI-compatible endpoint
+responds, then starts the Command Center at `http://127.0.0.1:8765`. Press
+`Ctrl+C` in that launcher window to stop both services.
+
 Standalone readiness requires valid config isolation, Node 22+, Git, a running Docker daemon, writable data roots, an explicit model, and an available provider secret. Doctor output contains only `[REDACTED]`, never the secret value.
 
 Generate a complete bounded session request from verified governance artifacts:

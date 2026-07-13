@@ -28,6 +28,10 @@ The local Command Center started on a loopback address and returned a successful
 HTTP response. It remains a governed session surface; it grants no source-write,
 Git-write, release, or deployment authority.
 
+The bundled combined launcher waits for the local model endpoint before starting
+the Command Center. It served the KOSINCHAI Control Center avatar as `image/png`
+from the same loopback-only surface.
+
 ## Local LLM
 
 Status: PASSED — local runtime endpoint only
