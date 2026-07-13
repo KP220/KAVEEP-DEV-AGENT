@@ -124,6 +124,10 @@ const gates = [
     "tools/test-controlled-process-runner.mjs"
   ],
   [
+    "Engineering Evaluation Baseline",
+    "tools/test-engineering-evaluation-runner.mjs"
+  ],
+  [
     "Capability Manifest",
     "tools/test-capability-manifest.mjs"
   ]

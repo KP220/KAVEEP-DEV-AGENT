@@ -15,7 +15,7 @@ listed evidence.
 | Windows CurrentUser DPAPI | live-certified | `evidence/windows-dpapi-current-user.json` consumed by release readiness | accepted on this Windows user/runtime only |
 | Node container isolation | blocked | Docker CLI is installed but the Docker daemon pipe is unavailable | not accepted |
 | Python, Go, and Rust container profiles | blocked | Python command is present; Go and Rust are absent; no profile has live Docker evidence | not accepted |
-| Representative real-task quality, cost, and latency evaluation | pending | No scored multi-task evaluation corpus or baseline artifact exists | not accepted |
+| Representative real-task quality, cost, and latency evaluation | pending | Deterministic four-task scoring baseline exists in `tools/test-engineering-evaluation-runner.mjs`; no live-model corpus or provider cost evidence exists | not accepted |
 | Signed migration and upgrade path | pending | No signed migration/upgrade capability or live evidence exists | not accepted |
 
 ## Current release decision
