@@ -9,10 +9,11 @@ import { runDynamicEngineeringLoop } from "../orchestration/dynamic-engineering-
 import { isInsideRoot } from "../repository/repository-intelligence.mjs";
 import { buildWorkspaceIndex, searchWorkspaceIndex } from "../repository/workspace-index.mjs";
 import { generateReviewedChange } from "../review/reviewed-change-generator.mjs";
-import { createSecureSandbox } from "../sandbox/secure-sandbox-manager.mjs";
+import { cleanupSecureSandbox, createSecureSandbox } from "../sandbox/secure-sandbox-manager.mjs";
 
 const digest = (value) => createHash("sha256").update(value).digest("hex");
 const timestamp = (clock) => (clock?.() ?? new Date()).toISOString();
+const throwIfAborted = (signal) => { if (signal?.aborted) throw new Error("Session cancelled."); };
 function semanticFeedback(container, maxCharacters) {
   return container.operationResults
     .filter((item) => ["failed", "timed_out"].includes(item.status))
@@ -78,6 +79,7 @@ export async function runStandaloneSession(request, registry, options = {}) {
   };
 
   try {
+    throwIfAborted(options.signal);
     if (!request || request.status !== "proposed") throw new Error("Standalone Session Request is invalid.");
     await record("analyzing", "เริ่มตรวจ governance และวิเคราะห์ repository");
     const orchestration = await runReadOnlyOrchestration({
@@ -86,6 +88,7 @@ export async function runStandaloneSession(request, registry, options = {}) {
       authoritySnapshot: request.authoritySnapshot,
       missionLock: request.missionLock
     }, { runId: `session_${suffix}`, clock: options.clock });
+    throwIfAborted(options.signal);
     result.artifacts.orchestration = orchestration;
 
     if (orchestration.status === "no_action") {
@@ -119,6 +122,7 @@ export async function runStandaloneSession(request, registry, options = {}) {
       auditRefs: [], status: "proposed", createdAt
     };
     const sandbox = await createSecureSandbox(sandboxRequest, evaluateSandboxPreparationGate(engineeringPlan, sandboxRequest));
+    throwIfAborted(options.signal);
     result.artifacts.sandboxResult = sandbox.result;
     if (!sandbox.manifest) throw new Error(sandbox.result.errors[0]?.message ?? "Sandbox preparation failed.");
     result.sandboxManifestRef = sandbox.result.manifestRef;
@@ -146,8 +150,9 @@ export async function runStandaloneSession(request, registry, options = {}) {
 
     await record("engineering", "เริ่ม Engineering Brain และ sandbox coding loop");
     let loop = request.brain.mode === "dynamic_tool_loop"
-      ? await runDynamicEngineeringLoop({ dynamicLoopRequestId: `dynamic_loop_request_session_${suffix}`, schemaVersion: "1.0.0", sandboxId: sandbox.manifest.sandboxId, manifestRef: sandbox.result.manifestRef, workspaceIndexRoot: request.workspaceIndex?.enabled ? request.workspaceIndex.indexRoot : null, brainRequest, maxTurns: request.brain.maxDynamicTurns, maxToolCalls: request.brain.maxDynamicToolCalls, maxToolResultCharacters: request.brain.maxToolResultCharacters, maxTranscriptCharacters: request.brain.maxTranscriptCharacters, status: "proposed", createdAt: timestamp(options.clock) }, registry, { clock: options.clock, proposalSchema: options.proposalSchema, actionSchema: options.dynamicActionSchema })
-      : await runIterativeEngineeringLoop({ loopRequestId: `engineering_loop_request_session_${suffix}`, schemaVersion: "1.0.0", sandboxId: sandbox.manifest.sandboxId, manifestRef: sandbox.result.manifestRef, brainRequest, maxAttempts: request.loop.maxAttempts, status: "proposed", createdAt: timestamp(options.clock) }, registry, { clock: options.clock, proposalSchema: options.proposalSchema });
+      ? await runDynamicEngineeringLoop({ dynamicLoopRequestId: `dynamic_loop_request_session_${suffix}`, schemaVersion: "1.0.0", sandboxId: sandbox.manifest.sandboxId, manifestRef: sandbox.result.manifestRef, workspaceIndexRoot: request.workspaceIndex?.enabled ? request.workspaceIndex.indexRoot : null, brainRequest, maxTurns: request.brain.maxDynamicTurns, maxToolCalls: request.brain.maxDynamicToolCalls, maxToolResultCharacters: request.brain.maxToolResultCharacters, maxTranscriptCharacters: request.brain.maxTranscriptCharacters, status: "proposed", createdAt: timestamp(options.clock) }, registry, { clock: options.clock, proposalSchema: options.proposalSchema, actionSchema: options.dynamicActionSchema, signal: options.signal })
+      : await runIterativeEngineeringLoop({ loopRequestId: `engineering_loop_request_session_${suffix}`, schemaVersion: "1.0.0", sandboxId: sandbox.manifest.sandboxId, manifestRef: sandbox.result.manifestRef, brainRequest, maxAttempts: request.loop.maxAttempts, status: "proposed", createdAt: timestamp(options.clock) }, registry, { clock: options.clock, proposalSchema: options.proposalSchema, signal: options.signal });
+    throwIfAborted(options.signal);
     result.artifacts.engineeringLoop = loop;
     if (loop.status !== "completed") {
       result.status = "blocked";
@@ -217,6 +222,15 @@ export async function runStandaloneSession(request, registry, options = {}) {
     result.recommendedNextAction = "review_and_approve";
     return result;
   } catch (error) {
+    if (options.signal?.aborted) {
+      if (result.cleanupRequired && result.sandboxManifestRef) {
+        try { await cleanupSecureSandbox(result.sandboxManifestRef); result.cleanupRequired = false; } catch (cleanupError) { result.errors.push(`Cancellation cleanup failed: ${cleanupError.message}`); }
+      }
+      result.status = "cancelled";
+      await record("cancelled", "Session cancelled by the user; no source changes were applied.");
+      result.recommendedNextAction = "no_action";
+      return result;
+    }
     result.status = "failed";
     await record("failed", "Standalone session ล้มเหลวอย่างปลอดภัย");
     result.errors.push(error.message);

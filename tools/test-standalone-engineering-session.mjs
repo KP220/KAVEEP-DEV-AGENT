@@ -111,6 +111,26 @@ try {
   assert.equal(repaired.status, "awaiting_approval"); assert.equal(brainCalls, 2); assert.equal(repairSawBoundedFeedback, true);
   assert.deepEqual(repaired.artifacts.containerValidationAttempts.map((item) => item.status), ["failed", "passed"]);
   assert.equal(repaired.artifacts.reviewedChange.patch.includes("fixed"), true);
+  await cleanupSecureSandbox(manifestRef); manifestRef = undefined;
+
+  let providerStarted;
+  const providerStartedPromise = new Promise((resolve) => { providerStarted = resolve; });
+  const cancellingRegistry = new LlmAdapterRegistry().register("mock", {
+    async generateStructured({ signal }) {
+      providerStarted();
+      return new Promise((_resolve, reject) => signal.addEventListener("abort", () => reject(signal.reason), { once: true }));
+    }
+  });
+  const controller = new AbortController();
+  const cancelling = runStandaloneSession({ ...request, sessionRequestId: "standalone_session_request_test_cancelled_004" }, cancellingRegistry, { clock, containerProcessAdapter: adapter, dockerExecutable: "docker-mock", signal: controller.signal });
+  await providerStartedPromise;
+  controller.abort(new Error("Test cancellation."));
+  const cancelled = await cancelling;
+  assert.equal(cancelled.status, "cancelled");
+  assert.equal(cancelled.state, "cancelled");
+  assert.equal(cancelled.cleanupRequired, false, JSON.stringify(cancelled));
+  assert.equal(cancelled.events.at(-1).state, "cancelled");
+  assert.equal(await readFile(path.join(root, "src", "index.mjs"), "utf8"), original);
   console.log("PASSED standalone engineering session E2E; governance-to-review; bounded semantic repair; runtime fail-closed; source unchanged");
 } finally {
   if (manifestRef) try { await cleanupSecureSandbox(manifestRef); } catch {}
