@@ -48,4 +48,9 @@ npm run kaveep -- run <config.json> <authority-snapshot.json> <mission-lock.json
 
 The output includes the durable session ID. Inspect it later with `kaveep status <config.json> <session-id>`, restart safely with `recover`, or verify and clean it with `cancel`. Recovery always begins at `received` and reruns governance.
 
+For `local-openai-compatible`, the runtime automatically caps a session request
+at 12,000 context characters and 1,024 output tokens even when broader config
+defaults exist. This conservative budget prevents a local llama.cpp slot from
+being overfilled; it does not alter configured remote-provider budgets.
+
 On Windows, set `OPENAI_API_KEY` temporarily and run `npm run kaveep -- secret-import <config.json>`. KAVEEP protects it with CurrentUser DPAPI, stores only ciphertext under the external data root, and updates config to the `windows-dpapi` reference. Do not place secrets in JSON files, command arguments, shell history, repository files, durable artifacts, or logs.

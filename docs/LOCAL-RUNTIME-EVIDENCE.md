@@ -60,3 +60,16 @@ tokens and 8 completion tokens.
 This certifies only the local model runtime and OpenAI-compatible endpoint. It
 does not certify autonomous coding quality, source-write safety, production
 operation, container validation, or the entire DEV-AGENT workflow.
+
+## Local Engineering Workflow Probe
+
+Status: BLOCKED (correctly recorded)
+
+The read-only local-model evaluator was run against the configured endpoint
+with container validation disabled and sandbox cleanup enabled. The original
+100,000-character default produced an HTTP 400 because the request exceeded the
+llama-server slot context. Local sessions now cap context at 12,000 characters
+and output at 1,024 tokens; the overflow did not recur. The one-pass workflow
+probe nevertheless timed out at its provider limit, while sandbox cleanup
+completed and no source write was attempted. This is evidence of an incomplete
+local coding-workflow certification, not a successful quality result.

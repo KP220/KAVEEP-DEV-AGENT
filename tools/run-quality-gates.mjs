@@ -103,6 +103,10 @@ const gates = [
     "tools/test-standalone-app.mjs"
   ],
   [
+    "Local Model Runtime Budget",
+    "tools/test-local-model-budget.mjs"
+  ],
+  [
     "Command Center Streaming Surface",
     "tools/test-command-center-server.mjs"
   ],

@@ -34,6 +34,12 @@ const IMPLEMENTED_PROVIDER_FACTORIES = Object.freeze({
   openai: createOpenAIAdapter,
   "local-openai-compatible": createLocalOpenAiCompatibleAdapter
 });
+const LOCAL_RUNTIME_BUDGET = Object.freeze({ maxContextCharacters: 12000, maxOutputTokens: 1024 });
+
+function runtimeBudget(config) {
+  if (config.provider.id !== "local-openai-compatible") return config.defaults;
+  return { ...config.defaults, maxContextCharacters: Math.min(config.defaults.maxContextCharacters, LOCAL_RUNTIME_BUDGET.maxContextCharacters), maxOutputTokens: Math.min(config.defaults.maxOutputTokens, LOCAL_RUNTIME_BUDGET.maxOutputTokens) };
+}
 
 export function resolveDefaultProfile(options = {}) {
   const configPath = path.resolve(options.configPath ?? process.env.KAVEEP_CONFIG ?? (process.platform === "win32" ? "C:\\KAVEEP\\data\\config.json" : path.join(process.env.HOME ?? ".", ".kaveep", "config.json")));
@@ -202,6 +208,7 @@ export function createSessionRequest(
 
   const providerId =
     requireConfiguredProvider(config);
+  const budget = runtimeBudget(config);
 
   if (
     authoritySnapshot.repositoryRoot !==
@@ -232,9 +239,9 @@ export function createSessionRequest(
       model: config.provider.model,
       budget: {
         maxContextCharacters:
-          config.defaults.maxContextCharacters,
+          budget.maxContextCharacters,
         maxOutputTokens:
-          config.defaults.maxOutputTokens,
+          budget.maxOutputTokens,
         maxEdits:
           config.defaults.maxEdits,
         timeoutMs: 120000
