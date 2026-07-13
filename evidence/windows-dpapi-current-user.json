@@ -1,0 +1,11 @@
+{
+  "certificationId": "windows_dpapi_current_user_live",
+  "schemaVersion": "1.0.0",
+  "packageVersion": "0.33.0",
+  "platform": "win32",
+  "status": "certified",
+  "plaintextPersisted": false,
+  "roundTripVerified": true,
+  "providerSerializedRedacted": true,
+  "certifiedAt": "2026-07-13T02:54:22.330Z"
+}
