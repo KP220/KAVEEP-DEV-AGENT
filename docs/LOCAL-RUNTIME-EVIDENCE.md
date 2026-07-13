@@ -38,6 +38,13 @@ On 2026-07-13 the launched services were independently rechecked: `GET
 `KAVEEP launcher live.` to the exact-response probe (20 prompt tokens, 7
 completion tokens).
 
+After the Command Center cooperative-cancellation update, the launcher was
+restarted and rechecked on the same loopback endpoints. The Command Center
+returned HTTP 200 and served the `Cancel active session` control; the model
+endpoint still returned the `kaveep-local` alias. The cancellation route itself
+is covered by a deterministic SSE regression test, including the post-completion
+`404` case that prevents cancellation of a non-active session.
+
 ## Local LLM
 
 Status: PASSED — local runtime endpoint only
