@@ -14,6 +14,10 @@ Set `OPENAI_API_KEY` only in the process environment and start Docker Desktop wh
 npm run kaveep -- doctor <config.json>
 ```
 
+For the local Command Center, run `tools\KAVEEP-Command-Center.cmd` on Windows.
+It serves only the local governed session UI; it does not grant write, Git, or
+deployment authority.
+
 Standalone readiness requires valid config isolation, Node 22+, Git, a running Docker daemon, writable data roots, an explicit model, and an available provider secret. Doctor output contains only `[REDACTED]`, never the secret value.
 
 Generate a complete bounded session request from verified governance artifacts:

@@ -1,4 +1,6 @@
 import assert from "node:assert/strict";
+import { execFileSync } from "node:child_process";
+import { mkdtemp, rm } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 
@@ -23,7 +25,16 @@ import {
   listProcessProfiles
 } from "../src/process/process-profile-registry.mjs";
 
-const repositoryRoot = process.cwd();
+// The runner must be tested against a repository owned by this test process.
+// Using the checkout itself is not portable when a sandbox identity differs
+// from the checkout owner, and must not be solved by weakening Git config.
+const repositoryRoot = await mkdtemp(
+  path.join(os.tmpdir(), "kaveep-controlled-process-")
+);
+execFileSync("git", ["init", "--quiet", repositoryRoot], {
+  stdio: "ignore",
+  windowsHide: true
+});
 
 let sequence = 0;
 
@@ -879,6 +890,8 @@ assert.ok(
     CONTROLLED_PROCESS_RUNNER_CAPABILITIES
   )
 );
+
+await rm(repositoryRoot, { recursive: true, force: true });
 
 console.log(
   [

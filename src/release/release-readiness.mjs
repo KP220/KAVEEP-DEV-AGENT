@@ -1,5 +1,6 @@
 import { spawn } from "node:child_process";
-import { access, mkdir, readFile, readdir } from "node:fs/promises";
+import { access, mkdtemp, readFile, readdir, rm } from "node:fs/promises";
+import os from "node:os";
 import path from "node:path";
 
 function run(file, args, options = {}) { return new Promise((resolve) => { const child = spawn(file, args, { cwd: options.cwd, env: { ...process.env, ...options.env }, shell: false, windowsHide: true, stdio: ["ignore", "pipe", "pipe"] }); let stdout = "", stderr = ""; child.stdout.on("data", (chunk) => stdout += chunk); child.stderr.on("data", (chunk) => stderr += chunk); child.once("error", (error) => resolve({ code: null, stdout, stderr: error.message })); child.once("exit", (code) => resolve({ code, stdout, stderr })); }); }
@@ -10,10 +11,14 @@ export async function assessReleaseReadiness(repositoryRoot, options = {}) {
   const required = ["tools/kaveep.mjs", "src/app/standalone-app.mjs", "docs/LOCAL-SETUP.md", "docs/STANDALONE-SESSION.md", "specs/SPEC-031.md"]; for (const relative of required) { try { await access(path.join(root, relative)); checks.push({ id: `file_${relative}`, status: "passed", detail: relative }); } catch { blockers.push(`missing:${relative}`); checks.push({ id: `file_${relative}`, status: "failed", detail: relative }); } }
   const modules = await collect(path.join(root, "src"), (file) => file.endsWith(".mjs")); modules.push(...await collect(path.join(root, "tools"), (file) => file.endsWith(".mjs") && !path.basename(file).startsWith("test-")));
   const runner = options.processAdapter?.run ?? run; let syntaxFailures = 0; for (const file of modules) { const result = await runner(process.execPath, ["--check", file], { cwd: root }); if (result.code !== 0) syntaxFailures += 1; } checks.push({ id: "module_syntax", status: syntaxFailures ? "failed" : "passed", detail: `${modules.length} modules; ${syntaxFailures} failures.` }); if (syntaxFailures) blockers.push("module_syntax_failed");
-  const npmViaNode = process.platform === "win32" && process.env.npm_execpath;
-  const cacheRoot = process.platform === "win32" ? "C:\\tmp\\kaveep-npm-cache" : "/tmp/kaveep-npm-cache";
-  if (!options.processAdapter) await mkdir(cacheRoot, { recursive: true });
-  const pack = await runner(npmViaNode ? process.execPath : "npm", npmViaNode ? [process.env.npm_execpath, "pack", "--dry-run", "--json"] : ["pack", "--dry-run", "--json"], { cwd: root, env: { npm_config_cache: cacheRoot } }); let packFiles = 0; try { packFiles = JSON.parse(pack.stdout)[0].files.length; } catch {} const packOk = pack.code === 0 && packFiles > 20; checks.push({ id: "package_dry_run", status: packOk ? "passed" : "failed", detail: packOk ? `${packFiles} packaged files.` : (pack.stderr || "Package inventory unavailable.").trim() }); if (!packOk) blockers.push("package_dry_run_failed");
+  const npmCli = path.join(path.dirname(process.execPath), "node_modules", "npm", "bin", "npm-cli.js");
+  let npmViaNode = false;
+  if (process.platform === "win32") { try { await access(npmCli); npmViaNode = true; } catch {} }
+  const cacheRoot = options.processAdapter ? null : await mkdtemp(path.join(os.tmpdir(), "kaveep-npm-cache-"));
+  let pack;
+  try { pack = await runner(npmViaNode ? process.execPath : "npm", npmViaNode ? [npmCli, "pack", "--dry-run", "--json"] : ["pack", "--dry-run", "--json"], { cwd: root, env: cacheRoot ? { npm_config_cache: cacheRoot } : {} }); }
+  finally { if (cacheRoot) await rm(cacheRoot, { recursive: true, force: true }); }
+  let packFiles = 0; try { packFiles = JSON.parse(pack.stdout)[0].files.length; } catch {} const packOk = pack.code === 0 && packFiles > 20; checks.push({ id: "package_dry_run", status: packOk ? "passed" : "failed", detail: packOk ? `${packFiles} packaged files.` : (pack.stderr || "Package inventory unavailable.").trim() }); if (!packOk) blockers.push("package_dry_run_failed");
   const docker = options.dockerCertificationStatus ?? "runtime_unavailable"; checks.push({ id: "live_container_certification", status: docker === "certified" ? "passed" : "blocked", detail: docker }); if (docker !== "certified") blockers.push("live_container_not_certified");
   const dpapi = options.dpapiCertificationStatus ?? "not_certified"; checks.push({ id: "windows_dpapi_certification", status: dpapi === "certified" ? "passed" : "blocked", detail: dpapi }); if (dpapi !== "certified") blockers.push("windows_dpapi_not_certified");
   blockers.push("interactive_streaming_ux_pending", "multi_language_live_certification_pending");
