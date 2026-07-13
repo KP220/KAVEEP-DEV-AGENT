@@ -69,7 +69,9 @@ The read-only local-model evaluator was run against the configured endpoint
 with container validation disabled and sandbox cleanup enabled. The original
 100,000-character default produced an HTTP 400 because the request exceeded the
 llama-server slot context. Local sessions now cap context at 12,000 characters
-and output at 1,024 tokens; the overflow did not recur. The one-pass workflow
-probe nevertheless timed out at its provider limit, while sandbox cleanup
+and 768 output tokens; the overflow did not recur. A fresh one-pass probe then
+returned a proposal after roughly 119.5 seconds, but deterministic validation
+rejected its extra top-level fields. The local adapter now supplies the allowed
+top-level keys explicitly while keeping validation strict. Sandbox cleanup
 completed and no source write was attempted. This is evidence of an incomplete
 local coding-workflow certification, not a successful quality result.

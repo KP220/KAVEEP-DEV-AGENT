@@ -49,7 +49,7 @@ npm run kaveep -- run <config.json> <authority-snapshot.json> <mission-lock.json
 The output includes the durable session ID. Inspect it later with `kaveep status <config.json> <session-id>`, restart safely with `recover`, or verify and clean it with `cancel`. Recovery always begins at `received` and reruns governance.
 
 For `local-openai-compatible`, the runtime automatically caps a session request
-at 12,000 context characters and 1,024 output tokens even when broader config
+at 12,000 context characters and 768 output tokens even when broader config
 defaults exist. This conservative budget prevents a local llama.cpp slot from
 being overfilled; it does not alter configured remote-provider budgets.
 

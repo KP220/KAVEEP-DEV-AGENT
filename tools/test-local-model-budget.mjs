@@ -7,7 +7,7 @@ const defaults = { maxContextCharacters: 100000, maxOutputTokens: 8000, maxEdits
 const base = { repositoryRoot: snapshot.repositoryRoot, roots: { workspaceIndex: "C:\\index" }, execution: { profile: "node", image: "node:test", allowedImages: ["node:test"], requireContainer: false }, defaults };
 const local = createSessionRequest({ ...base, provider: { id: "local-openai-compatible", model: "kaveep-local" } }, snapshot, lock, "modify code in src/index.mjs", { id: "local_budget" });
 assert.equal(local.brain.budget.maxContextCharacters, 12000);
-assert.equal(local.brain.budget.maxOutputTokens, 1024);
+assert.equal(local.brain.budget.maxOutputTokens, 768);
 const remote = createSessionRequest({ ...base, provider: { id: "openai", model: "remote-model" } }, snapshot, lock, "modify code in src/index.mjs", { id: "remote_budget" });
 assert.equal(remote.brain.budget.maxContextCharacters, 100000);
 assert.equal(remote.brain.budget.maxOutputTokens, 8000);

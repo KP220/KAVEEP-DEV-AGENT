@@ -34,7 +34,7 @@ const IMPLEMENTED_PROVIDER_FACTORIES = Object.freeze({
   openai: createOpenAIAdapter,
   "local-openai-compatible": createLocalOpenAiCompatibleAdapter
 });
-const LOCAL_RUNTIME_BUDGET = Object.freeze({ maxContextCharacters: 12000, maxOutputTokens: 1024 });
+const LOCAL_RUNTIME_BUDGET = Object.freeze({ maxContextCharacters: 12000, maxOutputTokens: 768 });
 
 function runtimeBudget(config) {
   if (config.provider.id !== "local-openai-compatible") return config.defaults;
