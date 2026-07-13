@@ -84,6 +84,9 @@ and `status="proposed"` exactly; deterministic validation remains unchanged.
 The next probe (`local_eval_bb5fc71328e74a81a1ef326f7091e8da`) ran for 58,207 ms,
 passed those stages, and was rejected because it exceeded the request's edit
 budget. The instruction now states the exact maximum number of proposed edits.
-Sandbox cleanup completed and no source write was attempted. This is evidence
-of an incomplete local coding-workflow certification, not a successful quality
-result.
+The next probe (`local_eval_cc8b410a3885442e9bca079f9b52e020`) ran for 71,873 ms,
+passed that budget check, and was rejected because a proposed path was empty or
+not relative. The instruction now limits non-create edit paths to the explicit
+observed-context path list. Sandbox cleanup completed and no source write was
+attempted. This is evidence of an incomplete local coding-workflow
+certification, not a successful quality result.
