@@ -1,5 +1,5 @@
 import { createHash, createHmac, randomUUID, timingSafeEqual } from "node:crypto";
-import { mkdir, open, readFile, rename } from "node:fs/promises";
+import { mkdir, open, readFile, rename, rm } from "node:fs/promises";
 import path from "node:path";
 
 const hash = (value) => createHash("sha256").update(typeof value === "string" ? value : canonical(value)).digest("hex");
@@ -14,6 +14,7 @@ function validate(plan) {
 }
 function signatureFor(plan, secret) { if (typeof secret !== "string" || secret.length < 16) throw new Error("Migration signing secret must be at least 16 characters."); return createHmac("sha256", secret).update(canonical(unsigned(plan))).digest("hex"); }
 function target(root, relative) { const resolved = path.resolve(root, relative); const relation = path.relative(root, resolved); if (relation.startsWith("..") || path.isAbsolute(relation)) throw new Error("Migration path escaped the approved root."); return resolved; }
+async function atomicReplace(file, text) { const temporary = `${file}.${randomUUID()}.rollback.tmp`; const handle = await open(temporary, "wx", 0o600); try { await handle.writeFile(text); await handle.sync(); } finally { await handle.close(); } await rename(temporary, file); }
 
 export function signMigrationPlan(plan, secret) { validate(plan); return { ...unsigned(plan), signature: signatureFor(plan, secret) }; }
 
@@ -38,12 +39,19 @@ export async function applySignedJsonMigration(plan, secret, root, transform, op
     if (hash(beforeText) !== artifact.beforeSha256) return { status: "blocked", verification, applied: [], error: `Migration before-hash mismatch: ${artifact.path}` };
     const before = JSON.parse(beforeText); const after = await transform(structuredClone(before), structuredClone(artifact), structuredClone(plan)); const afterText = `${canonical(after)}\n`;
     if (hash(afterText) !== artifact.afterSha256) return { status: "blocked", verification, applied: [], error: `Migration after-hash mismatch: ${artifact.path}` };
-    prepared.push({ artifact, file, afterText });
+    prepared.push({ artifact, file, beforeText, afterText });
   }
   const temporary = [];
+  const committed = [];
   try {
     for (const item of prepared) { const file = `${item.file}.${randomUUID()}.migration.tmp`; await mkdir(path.dirname(file), { recursive: true }); const handle = await open(file, "wx", 0o600); try { await handle.writeFile(item.afterText); await handle.sync(); } finally { await handle.close(); } temporary.push({ ...item, temporary: file }); }
-    for (const item of temporary) await rename(item.temporary, item.file);
+    const commitRename = options.rename ?? rename;
+    for (const item of temporary) { await commitRename(item.temporary, item.file); committed.push(item); }
     return { status: "completed", verification, applied: prepared.map((item) => ({ path: item.artifact.path, beforeSha256: item.artifact.beforeSha256, afterSha256: item.artifact.afterSha256 })), recommendedNextAction: "verify_upgrade" };
-  } catch (error) { return { status: "failed", verification, applied: [], error: error.message }; }
+  } catch (error) {
+    const rollbackErrors = [];
+    for (const item of [...committed].reverse()) try { await atomicReplace(item.file, item.beforeText); } catch (rollback) { rollbackErrors.push(rollback.message); }
+    for (const item of temporary) try { await rm(item.temporary, { force: true }); } catch (cleanup) { rollbackErrors.push(cleanup.message); }
+    return { status: "failed", verification, applied: [], error: error.message, rollbackStatus: rollbackErrors.length ? "failed" : "completed", rollbackErrors };
+  }
 }
