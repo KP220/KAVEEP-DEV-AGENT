@@ -81,6 +81,9 @@ ran for 64,577 ms and passed the reference correlation stage, then was rejected
 because it set `proposalAuthorizesExecution` to true. The system instruction now
 also requires `proposalAuthorizesExecution=false`, `requiresHumanApproval=true`,
 and `status="proposed"` exactly; deterministic validation remains unchanged.
+The next probe (`local_eval_bb5fc71328e74a81a1ef326f7091e8da`) ran for 58,207 ms,
+passed those stages, and was rejected because it exceeded the request's edit
+budget. The instruction now states the exact maximum number of proposed edits.
 Sandbox cleanup completed and no source write was attempted. This is evidence
 of an incomplete local coding-workflow certification, not a successful quality
 result.
