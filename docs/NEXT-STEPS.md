@@ -7,7 +7,7 @@ interactive operation and broad live-runtime evidence rather than core safety
 plumbing. A bounded dynamic observe/reason/tool loop is already implemented;
 its production evaluation remains incomplete:
 
-1. Complete the streaming interactive session UX with interruption, approval prompts, and compact artifact views. SSE progress and final-result delivery are implemented and tested.
+1. Complete the streaming interactive session UX with cooperative interruption. SSE progress, final-result delivery, compact artifacts, and the human-approval prompt are implemented and tested.
 2. Live-certify Node container isolation after Docker is available, then Python, Go, and Rust profiles with pinned offline images and representative fixtures.
 3. Add eval suites for real bug-fix, refactor, test-writing, and multi-file tasks, with quality/cost/latency baselines.
 4. Add signed migration and upgrade tooling before a 1.0 release.
