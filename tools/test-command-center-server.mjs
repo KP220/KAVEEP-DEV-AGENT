@@ -21,6 +21,11 @@ try {
   const avatar = await fetch(`${root}/kaveep-avatar.png`);
   assert.equal(avatar.status, 200);
   assert.equal(avatar.headers.get("content-type"), "image/png");
+  const page = await fetch(root);
+  assert.equal(page.status, 200);
+  const pageText = await page.text();
+  assert.match(pageText, /id="events"/);
+  assert.match(pageText, /Human approval required/);
   const missing = await fetch(`${root}/api/ask/stream`, { method: "POST", headers: { "Content-Type": "application/json" }, body: "{}" });
   assert.equal(missing.status, 400);
   assert.equal((await missing.json()).error, "Command is required.");
